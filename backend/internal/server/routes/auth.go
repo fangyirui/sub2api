@@ -80,6 +80,9 @@ func RegisterAuthRoutes(
 		)
 	}
 
+	// 公开 SMS 订单查询（无需认证）
+	v1.GET("/sms-orders/:order_no", h.SmsOrder.Query)
+
 	// 公开设置（无需认证）
 	settings := v1.Group("/settings")
 	{

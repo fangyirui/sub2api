@@ -130,6 +130,16 @@ const routes: RouteRecordRaw[] = [
       title: 'Key Usage',
     }
   },
+  {
+    path: '/sms-query',
+    name: 'SmsQuery',
+    component: () => import('@/views/SmsQueryView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'SMS Query',
+      titleKey: 'smsQuery.title'
+    }
+  },
 
   // ==================== User Routes ====================
   {

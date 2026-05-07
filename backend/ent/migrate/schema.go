@@ -823,6 +823,29 @@ var (
 		Columns:    SettingsColumns,
 		PrimaryKey: []*schema.Column{SettingsColumns[0]},
 	}
+	// SmsOrdersColumns holds the columns for the "sms_orders" table.
+	SmsOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "order_no", Type: field.TypeString, Unique: true, Size: 100},
+		{Name: "phone_number", Type: field.TypeString, Size: 50},
+		{Name: "sms_content", Type: field.TypeString, Nullable: true, Default: "", SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "status", Type: field.TypeString, Size: 20, Default: "pending"},
+	}
+	// SmsOrdersTable holds the schema information for the "sms_orders" table.
+	SmsOrdersTable = &schema.Table{
+		Name:       "sms_orders",
+		Columns:    SmsOrdersColumns,
+		PrimaryKey: []*schema.Column{SmsOrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "smsorder_status",
+				Unique:  false,
+				Columns: []*schema.Column{SmsOrdersColumns[6]},
+			},
+		},
+	}
 	// SubscriptionPlansColumns holds the columns for the "subscription_plans" table.
 	SubscriptionPlansColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -1324,6 +1347,7 @@ var (
 		RedeemCodesTable,
 		SecuritySecretsTable,
 		SettingsTable,
+		SmsOrdersTable,
 		SubscriptionPlansTable,
 		TLSFingerprintProfilesTable,
 		UsageCleanupTasksTable,
@@ -1399,6 +1423,9 @@ func init() {
 	}
 	SettingsTable.Annotation = &entsql.Annotation{
 		Table: "settings",
+	}
+	SmsOrdersTable.Annotation = &entsql.Annotation{
+		Table: "sms_orders",
 	}
 	SubscriptionPlansTable.Annotation = &entsql.Annotation{
 		Table: "subscription_plans",

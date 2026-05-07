@@ -50,6 +50,7 @@ type Handlers struct {
 	Totp           *TotpHandler
 	Payment        *PaymentHandler
 	PaymentWebhook *PaymentWebhookHandler
+	SmsOrder       *SmsOrderHandler
 }
 
 // BuildInfo contains build-time information

@@ -32,6 +32,7 @@ import (
 	"github.com/Wei-Shaw/sub2api/ent/redeemcode"
 	"github.com/Wei-Shaw/sub2api/ent/securitysecret"
 	"github.com/Wei-Shaw/sub2api/ent/setting"
+	"github.com/Wei-Shaw/sub2api/ent/smsorder"
 	"github.com/Wei-Shaw/sub2api/ent/subscriptionplan"
 	"github.com/Wei-Shaw/sub2api/ent/tlsfingerprintprofile"
 	"github.com/Wei-Shaw/sub2api/ent/usagecleanuptask"
@@ -84,6 +85,8 @@ type Client struct {
 	SecuritySecret *SecuritySecretClient
 	// Setting is the client for interacting with the Setting builders.
 	Setting *SettingClient
+	// SmsOrder is the client for interacting with the SmsOrder builders.
+	SmsOrder *SmsOrderClient
 	// SubscriptionPlan is the client for interacting with the SubscriptionPlan builders.
 	SubscriptionPlan *SubscriptionPlanClient
 	// TLSFingerprintProfile is the client for interacting with the TLSFingerprintProfile builders.
@@ -130,6 +133,7 @@ func (c *Client) init() {
 	c.RedeemCode = NewRedeemCodeClient(c.config)
 	c.SecuritySecret = NewSecuritySecretClient(c.config)
 	c.Setting = NewSettingClient(c.config)
+	c.SmsOrder = NewSmsOrderClient(c.config)
 	c.SubscriptionPlan = NewSubscriptionPlanClient(c.config)
 	c.TLSFingerprintProfile = NewTLSFingerprintProfileClient(c.config)
 	c.UsageCleanupTask = NewUsageCleanupTaskClient(c.config)
@@ -248,6 +252,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RedeemCode:              NewRedeemCodeClient(cfg),
 		SecuritySecret:          NewSecuritySecretClient(cfg),
 		Setting:                 NewSettingClient(cfg),
+		SmsOrder:                NewSmsOrderClient(cfg),
 		SubscriptionPlan:        NewSubscriptionPlanClient(cfg),
 		TLSFingerprintProfile:   NewTLSFingerprintProfileClient(cfg),
 		UsageCleanupTask:        NewUsageCleanupTaskClient(cfg),
@@ -293,6 +298,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RedeemCode:              NewRedeemCodeClient(cfg),
 		SecuritySecret:          NewSecuritySecretClient(cfg),
 		Setting:                 NewSettingClient(cfg),
+		SmsOrder:                NewSmsOrderClient(cfg),
 		SubscriptionPlan:        NewSubscriptionPlanClient(cfg),
 		TLSFingerprintProfile:   NewTLSFingerprintProfileClient(cfg),
 		UsageCleanupTask:        NewUsageCleanupTaskClient(cfg),
@@ -334,9 +340,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.APIKey, c.Account, c.AccountGroup, c.Announcement, c.AnnouncementRead,
 		c.ErrorPassthroughRule, c.Group, c.IdempotencyRecord, c.PaymentAuditLog,
 		c.PaymentOrder, c.PaymentProviderInstance, c.PromoCode, c.PromoCodeUsage,
-		c.Proxy, c.RedeemCode, c.SecuritySecret, c.Setting, c.SubscriptionPlan,
-		c.TLSFingerprintProfile, c.UsageCleanupTask, c.UsageLog, c.User,
-		c.UserAllowedGroup, c.UserAttributeDefinition, c.UserAttributeValue,
+		c.Proxy, c.RedeemCode, c.SecuritySecret, c.Setting, c.SmsOrder,
+		c.SubscriptionPlan, c.TLSFingerprintProfile, c.UsageCleanupTask, c.UsageLog,
+		c.User, c.UserAllowedGroup, c.UserAttributeDefinition, c.UserAttributeValue,
 		c.UserSubscription,
 	} {
 		n.Use(hooks...)
@@ -350,9 +356,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.APIKey, c.Account, c.AccountGroup, c.Announcement, c.AnnouncementRead,
 		c.ErrorPassthroughRule, c.Group, c.IdempotencyRecord, c.PaymentAuditLog,
 		c.PaymentOrder, c.PaymentProviderInstance, c.PromoCode, c.PromoCodeUsage,
-		c.Proxy, c.RedeemCode, c.SecuritySecret, c.Setting, c.SubscriptionPlan,
-		c.TLSFingerprintProfile, c.UsageCleanupTask, c.UsageLog, c.User,
-		c.UserAllowedGroup, c.UserAttributeDefinition, c.UserAttributeValue,
+		c.Proxy, c.RedeemCode, c.SecuritySecret, c.Setting, c.SmsOrder,
+		c.SubscriptionPlan, c.TLSFingerprintProfile, c.UsageCleanupTask, c.UsageLog,
+		c.User, c.UserAllowedGroup, c.UserAttributeDefinition, c.UserAttributeValue,
 		c.UserSubscription,
 	} {
 		n.Intercept(interceptors...)
@@ -396,6 +402,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SecuritySecret.mutate(ctx, m)
 	case *SettingMutation:
 		return c.Setting.mutate(ctx, m)
+	case *SmsOrderMutation:
+		return c.SmsOrder.mutate(ctx, m)
 	case *SubscriptionPlanMutation:
 		return c.SubscriptionPlan.mutate(ctx, m)
 	case *TLSFingerprintProfileMutation:
@@ -3071,6 +3079,139 @@ func (c *SettingClient) mutate(ctx context.Context, m *SettingMutation) (Value, 
 	}
 }
 
+// SmsOrderClient is a client for the SmsOrder schema.
+type SmsOrderClient struct {
+	config
+}
+
+// NewSmsOrderClient returns a client for the SmsOrder from the given config.
+func NewSmsOrderClient(c config) *SmsOrderClient {
+	return &SmsOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `smsorder.Hooks(f(g(h())))`.
+func (c *SmsOrderClient) Use(hooks ...Hook) {
+	c.hooks.SmsOrder = append(c.hooks.SmsOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `smsorder.Intercept(f(g(h())))`.
+func (c *SmsOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SmsOrder = append(c.inters.SmsOrder, interceptors...)
+}
+
+// Create returns a builder for creating a SmsOrder entity.
+func (c *SmsOrderClient) Create() *SmsOrderCreate {
+	mutation := newSmsOrderMutation(c.config, OpCreate)
+	return &SmsOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SmsOrder entities.
+func (c *SmsOrderClient) CreateBulk(builders ...*SmsOrderCreate) *SmsOrderCreateBulk {
+	return &SmsOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SmsOrderClient) MapCreateBulk(slice any, setFunc func(*SmsOrderCreate, int)) *SmsOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SmsOrderCreateBulk{err: fmt.Errorf("calling to SmsOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SmsOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SmsOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SmsOrder.
+func (c *SmsOrderClient) Update() *SmsOrderUpdate {
+	mutation := newSmsOrderMutation(c.config, OpUpdate)
+	return &SmsOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SmsOrderClient) UpdateOne(_m *SmsOrder) *SmsOrderUpdateOne {
+	mutation := newSmsOrderMutation(c.config, OpUpdateOne, withSmsOrder(_m))
+	return &SmsOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SmsOrderClient) UpdateOneID(id int64) *SmsOrderUpdateOne {
+	mutation := newSmsOrderMutation(c.config, OpUpdateOne, withSmsOrderID(id))
+	return &SmsOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SmsOrder.
+func (c *SmsOrderClient) Delete() *SmsOrderDelete {
+	mutation := newSmsOrderMutation(c.config, OpDelete)
+	return &SmsOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SmsOrderClient) DeleteOne(_m *SmsOrder) *SmsOrderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SmsOrderClient) DeleteOneID(id int64) *SmsOrderDeleteOne {
+	builder := c.Delete().Where(smsorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SmsOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for SmsOrder.
+func (c *SmsOrderClient) Query() *SmsOrderQuery {
+	return &SmsOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSmsOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SmsOrder entity by its id.
+func (c *SmsOrderClient) Get(ctx context.Context, id int64) (*SmsOrder, error) {
+	return c.Query().Where(smsorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SmsOrderClient) GetX(ctx context.Context, id int64) *SmsOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SmsOrderClient) Hooks() []Hook {
+	return c.hooks.SmsOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *SmsOrderClient) Interceptors() []Interceptor {
+	return c.inters.SmsOrder
+}
+
+func (c *SmsOrderClient) mutate(ctx context.Context, m *SmsOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SmsOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SmsOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SmsOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SmsOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SmsOrder mutation op: %q", m.Op())
+	}
+}
+
 // SubscriptionPlanClient is a client for the SubscriptionPlan schema.
 type SubscriptionPlanClient struct {
 	config
@@ -4631,7 +4772,7 @@ type (
 		APIKey, Account, AccountGroup, Announcement, AnnouncementRead,
 		ErrorPassthroughRule, Group, IdempotencyRecord, PaymentAuditLog, PaymentOrder,
 		PaymentProviderInstance, PromoCode, PromoCodeUsage, Proxy, RedeemCode,
-		SecuritySecret, Setting, SubscriptionPlan, TLSFingerprintProfile,
+		SecuritySecret, Setting, SmsOrder, SubscriptionPlan, TLSFingerprintProfile,
 		UsageCleanupTask, UsageLog, User, UserAllowedGroup, UserAttributeDefinition,
 		UserAttributeValue, UserSubscription []ent.Hook
 	}
@@ -4639,7 +4780,7 @@ type (
 		APIKey, Account, AccountGroup, Announcement, AnnouncementRead,
 		ErrorPassthroughRule, Group, IdempotencyRecord, PaymentAuditLog, PaymentOrder,
 		PaymentProviderInstance, PromoCode, PromoCodeUsage, Proxy, RedeemCode,
-		SecuritySecret, Setting, SubscriptionPlan, TLSFingerprintProfile,
+		SecuritySecret, Setting, SmsOrder, SubscriptionPlan, TLSFingerprintProfile,
 		UsageCleanupTask, UsageLog, User, UserAllowedGroup, UserAttributeDefinition,
 		UserAttributeValue, UserSubscription []ent.Interceptor
 	}

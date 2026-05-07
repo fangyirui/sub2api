@@ -5468,4 +5468,24 @@ export default {
     },
   },
 
+  // SMS Order Query
+  smsQuery: {
+    title: 'SMS Order Query',
+    subtitle: 'Enter your order number to query virtual phone number and SMS content',
+    inputPlaceholder: 'Enter order number',
+    queryBtn: 'Query',
+    orderNo: 'Order No.',
+    phoneNumber: 'Phone Number',
+    smsContent: 'SMS Content',
+    noContent: 'No SMS content available',
+    notFound: 'Order not found, please check the order number',
+    queryError: 'Query failed, please try again later',
+    footer: 'Enter a valid order number to query',
+    status: {
+      pending: 'Pending',
+      received: 'Received',
+      expired: 'Expired',
+    },
+  },
+
 }

@@ -46,8 +46,6 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 		payment.ProvideRegistry,
 		payment.ProvideEncryptionKey,
 		payment.ProvideDefaultLoadBalancer,
-		service.ProvidePaymentConfigService,
-		service.ProvidePaymentOrderExpiryService,
 
 		// Privacy client factory for OpenAI training opt-out
 		providePrivacyClientFactory,

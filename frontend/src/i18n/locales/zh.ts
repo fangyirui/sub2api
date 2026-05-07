@@ -5656,4 +5656,24 @@ export default {
     },
   },
 
+  // SMS Order Query
+  smsQuery: {
+    title: '短信订单查询',
+    subtitle: '输入订单号查询虚拟手机号和短信内容',
+    inputPlaceholder: '请输入订单号',
+    queryBtn: '查询',
+    orderNo: '订单号',
+    phoneNumber: '手机号',
+    smsContent: '短信内容',
+    noContent: '暂无短信内容',
+    notFound: '未找到该订单，请检查订单号是否正确',
+    queryError: '查询失败，请稍后重试',
+    footer: '请输入正确的订单号进行查询',
+    status: {
+      pending: '等待中',
+      received: '已接收',
+      expired: '已过期',
+    },
+  },
+
 }

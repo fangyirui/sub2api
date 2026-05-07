@@ -23,6 +23,7 @@ import (
 	"github.com/Wei-Shaw/sub2api/ent/schema"
 	"github.com/Wei-Shaw/sub2api/ent/securitysecret"
 	"github.com/Wei-Shaw/sub2api/ent/setting"
+	"github.com/Wei-Shaw/sub2api/ent/smsorder"
 	"github.com/Wei-Shaw/sub2api/ent/subscriptionplan"
 	"github.com/Wei-Shaw/sub2api/ent/tlsfingerprintprofile"
 	"github.com/Wei-Shaw/sub2api/ent/usagecleanuptask"
@@ -926,6 +927,67 @@ func init() {
 	setting.DefaultUpdatedAt = settingDescUpdatedAt.Default.(func() time.Time)
 	// setting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	setting.UpdateDefaultUpdatedAt = settingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	smsorderMixin := schema.SmsOrder{}.Mixin()
+	smsorderMixinFields0 := smsorderMixin[0].Fields()
+	_ = smsorderMixinFields0
+	smsorderFields := schema.SmsOrder{}.Fields()
+	_ = smsorderFields
+	// smsorderDescCreatedAt is the schema descriptor for created_at field.
+	smsorderDescCreatedAt := smsorderMixinFields0[0].Descriptor()
+	// smsorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	smsorder.DefaultCreatedAt = smsorderDescCreatedAt.Default.(func() time.Time)
+	// smsorderDescUpdatedAt is the schema descriptor for updated_at field.
+	smsorderDescUpdatedAt := smsorderMixinFields0[1].Descriptor()
+	// smsorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	smsorder.DefaultUpdatedAt = smsorderDescUpdatedAt.Default.(func() time.Time)
+	// smsorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	smsorder.UpdateDefaultUpdatedAt = smsorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// smsorderDescOrderNo is the schema descriptor for order_no field.
+	smsorderDescOrderNo := smsorderFields[0].Descriptor()
+	// smsorder.OrderNoValidator is a validator for the "order_no" field. It is called by the builders before save.
+	smsorder.OrderNoValidator = func() func(string) error {
+		validators := smsorderDescOrderNo.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(order_no string) error {
+			for _, fn := range fns {
+				if err := fn(order_no); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// smsorderDescPhoneNumber is the schema descriptor for phone_number field.
+	smsorderDescPhoneNumber := smsorderFields[1].Descriptor()
+	// smsorder.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	smsorder.PhoneNumberValidator = func() func(string) error {
+		validators := smsorderDescPhoneNumber.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(phone_number string) error {
+			for _, fn := range fns {
+				if err := fn(phone_number); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// smsorderDescSmsContent is the schema descriptor for sms_content field.
+	smsorderDescSmsContent := smsorderFields[2].Descriptor()
+	// smsorder.DefaultSmsContent holds the default value on creation for the sms_content field.
+	smsorder.DefaultSmsContent = smsorderDescSmsContent.Default.(string)
+	// smsorderDescStatus is the schema descriptor for status field.
+	smsorderDescStatus := smsorderFields[3].Descriptor()
+	// smsorder.DefaultStatus holds the default value on creation for the status field.
+	smsorder.DefaultStatus = smsorderDescStatus.Default.(string)
+	// smsorder.StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	smsorder.StatusValidator = smsorderDescStatus.Validators[0].(func(string) error)
 	subscriptionplanFields := schema.SubscriptionPlan{}.Fields()
 	_ = subscriptionplanFields
 	// subscriptionplanDescName is the schema descriptor for name field.
