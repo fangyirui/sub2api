@@ -359,7 +359,32 @@ export default {
     orderManagement: '订单管理',
     paymentDashboard: '支付概览',
     paymentConfig: '支付配置',
-    paymentPlans: '订阅套餐'
+    paymentPlans: '订阅套餐',
+    models: '模型广场'
+  },
+
+  // Models
+  models: {
+    title: '模型广场',
+    subtitle: '浏览平台支持的 Claude 模型，了解定价与能力',
+    filterAll: '全部',
+    latest: '最新',
+    contextWindow: '上下文窗口',
+    input: '输入',
+    output: '输出',
+    inputPrice: '输入价格',
+    outputPrice: '输出价格',
+    cacheReadPrice: '缓存读取价格',
+    pricingNote: '定价信息来源于 Anthropic 官方，实际计费以平台设置为准。',
+    caps: {
+      vision: '视觉',
+      toolUse: '工具调用',
+      caching: '提示缓存',
+      pdf: 'PDF 输入',
+      computerUse: '计算机使用',
+      reasoning: '扩展思考',
+      webSearch: '网页搜索'
+    }
   },
 
   // Auth

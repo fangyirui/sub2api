@@ -359,7 +359,32 @@ export default {
     orderManagement: 'Orders',
     paymentDashboard: 'Payment Dashboard',
     paymentConfig: 'Payment Config',
-    paymentPlans: 'Plans'
+    paymentPlans: 'Plans',
+    models: 'Models'
+  },
+
+  // Models
+  models: {
+    title: 'Model Plaza',
+    subtitle: 'Browse supported Claude models with pricing and capabilities',
+    filterAll: 'All',
+    latest: 'Latest',
+    contextWindow: 'Context Window',
+    input: 'input',
+    output: 'output',
+    inputPrice: 'Input Price',
+    outputPrice: 'Output Price',
+    cacheReadPrice: 'Cache Read Price',
+    pricingNote: 'Pricing information is sourced from Anthropic. Actual billing is based on platform settings.',
+    caps: {
+      vision: 'Vision',
+      toolUse: 'Tool Use',
+      caching: 'Prompt Caching',
+      pdf: 'PDF Input',
+      computerUse: 'Computer Use',
+      reasoning: 'Extended Thinking',
+      webSearch: 'Web Search'
+    }
   },
 
   // Auth
