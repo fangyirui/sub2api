@@ -344,6 +344,7 @@ export default {
     redeemCodes: 'Redeem Codes',
     ops: 'Ops',
     promoCodes: 'Promo Codes',
+    smsOrders: 'SMS Orders',
     settings: 'Settings',
     myAccount: 'My Account',
     lightMode: 'Light Mode',
@@ -3286,6 +3287,43 @@ export default {
       deleteConfirm: 'Are you sure you want to delete this announcement? This action cannot be undone.'
     },
 
+    // SMS Orders
+    smsOrders: {
+      title: 'SMS Order Management',
+      description: 'Generate SMS order numbers; customers use them to claim phone numbers and verification codes',
+      count: 'Count',
+      generate: 'Generate',
+      generated: 'Generated {count} order(s)',
+      generateFailed: 'Failed to generate orders, please try again',
+      loadFailed: 'Failed to load orders, please try again',
+      copy: 'Copy',
+      copyWithTemplate: 'Copy order number to clipboard using the template',
+      template: {
+        label: 'Copy template',
+        placeholder: 'Enter copy template, use {order_no} as the order placeholder',
+        default: 'Your order number: {order_no}',
+        hint: 'Saved locally in your browser'
+      },
+      statusFilter: {
+        all: 'All statuses'
+      },
+      status: {
+        created: 'Awaiting Number',
+        pending: 'Awaiting SMS',
+        received: 'Received',
+        expired: 'Expired',
+        failed: 'Failed'
+      },
+      columns: {
+        orderNo: 'Order No.',
+        phone: 'Phone',
+        status: 'Status',
+        smsContent: 'SMS',
+        createdAt: 'Created At',
+        actions: 'Actions'
+      }
+    },
+
     // Promo Codes
     promo: {
       title: 'Promo Code Management',
@@ -5474,17 +5512,23 @@ export default {
     subtitle: 'Enter your order number to query virtual phone number and SMS content',
     inputPlaceholder: 'Enter order number',
     queryBtn: 'Query',
+    refreshBtn: 'Refresh',
     orderNo: 'Order No.',
     phoneNumber: 'Phone Number',
     smsContent: 'SMS Content',
     noContent: 'No SMS content available',
+    waitingPhone: 'Assigning phone number...',
+    waitingCode: 'Phone assigned, waiting for verification code',
     notFound: 'Order not found, please check the order number',
     queryError: 'Query failed, please try again later',
+    fetchFailed: 'Failed to fetch phone number, please contact support',
     footer: 'Enter a valid order number to query',
     status: {
-      pending: 'Pending',
+      created: 'Awaiting Number',
+      pending: 'Awaiting SMS',
       received: 'Received',
       expired: 'Expired',
+      failed: 'Failed',
     },
   },
 

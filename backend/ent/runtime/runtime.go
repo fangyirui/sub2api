@@ -962,28 +962,22 @@ func init() {
 	}()
 	// smsorderDescPhoneNumber is the schema descriptor for phone_number field.
 	smsorderDescPhoneNumber := smsorderFields[1].Descriptor()
+	// smsorder.DefaultPhoneNumber holds the default value on creation for the phone_number field.
+	smsorder.DefaultPhoneNumber = smsorderDescPhoneNumber.Default.(string)
 	// smsorder.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
-	smsorder.PhoneNumberValidator = func() func(string) error {
-		validators := smsorderDescPhoneNumber.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(phone_number string) error {
-			for _, fn := range fns {
-				if err := fn(phone_number); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	smsorder.PhoneNumberValidator = smsorderDescPhoneNumber.Validators[0].(func(string) error)
+	// smsorderDescHeroSmsID is the schema descriptor for hero_sms_id field.
+	smsorderDescHeroSmsID := smsorderFields[2].Descriptor()
+	// smsorder.DefaultHeroSmsID holds the default value on creation for the hero_sms_id field.
+	smsorder.DefaultHeroSmsID = smsorderDescHeroSmsID.Default.(string)
+	// smsorder.HeroSmsIDValidator is a validator for the "hero_sms_id" field. It is called by the builders before save.
+	smsorder.HeroSmsIDValidator = smsorderDescHeroSmsID.Validators[0].(func(string) error)
 	// smsorderDescSmsContent is the schema descriptor for sms_content field.
-	smsorderDescSmsContent := smsorderFields[2].Descriptor()
+	smsorderDescSmsContent := smsorderFields[3].Descriptor()
 	// smsorder.DefaultSmsContent holds the default value on creation for the sms_content field.
 	smsorder.DefaultSmsContent = smsorderDescSmsContent.Default.(string)
 	// smsorderDescStatus is the schema descriptor for status field.
-	smsorderDescStatus := smsorderFields[3].Descriptor()
+	smsorderDescStatus := smsorderFields[4].Descriptor()
 	// smsorder.DefaultStatus holds the default value on creation for the status field.
 	smsorder.DefaultStatus = smsorderDescStatus.Default.(string)
 	// smsorder.StatusValidator is a validator for the "status" field. It is called by the builders before save.

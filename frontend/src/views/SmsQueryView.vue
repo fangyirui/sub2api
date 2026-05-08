@@ -109,9 +109,33 @@
                 {{ t(`smsQuery.status.${result.status}`) }}
               </span>
             </div>
-            <span class="text-xs text-gray-400 dark:text-dark-500">
-              {{ formatTime(result.created_at) }}
-            </span>
+            <div class="flex items-center gap-3">
+              <button
+                v-if="canRefresh(result.status)"
+                @click="doQuery"
+                :disabled="loading"
+                class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 transition-colors hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/40"
+              >
+                <svg
+                  class="h-3.5 w-3.5"
+                  :class="loading ? 'animate-spin' : ''"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.5 4.5a8.25 8.25 0 0114.32 4.5m.68-4.5v4.5h-4.5m.32 8.25A8.25 8.25 0 014.68 13.5m-.68 4.5v-4.5h4.5"
+                  />
+                </svg>
+                {{ t('smsQuery.refreshBtn') }}
+              </button>
+              <span class="text-xs text-gray-400 dark:text-dark-500">
+                {{ formatTime(result.created_at) }}
+              </span>
+            </div>
           </div>
 
           <!-- Content -->
@@ -125,14 +149,29 @@
             <!-- Phone -->
             <div>
               <label class="mb-1 block text-xs font-medium text-gray-400 dark:text-dark-500">{{ t('smsQuery.phoneNumber') }}</label>
-              <p class="text-lg font-semibold text-primary-600 dark:text-primary-400">{{ result.phone_number }}</p>
+              <p
+                v-if="result.phone_number"
+                class="text-lg font-semibold text-primary-600 dark:text-primary-400"
+              >
+                {{ result.phone_number }}
+              </p>
+              <p v-else class="text-sm text-gray-500 dark:text-dark-400">{{ t('smsQuery.waitingPhone') }}</p>
             </div>
 
             <!-- SMS Content -->
             <div>
               <label class="mb-1 block text-xs font-medium text-gray-400 dark:text-dark-500">{{ t('smsQuery.smsContent') }}</label>
               <div class="rounded-xl bg-gray-50 p-4 dark:bg-dark-700/50">
-                <p class="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 dark:text-dark-200">{{ result.sms_content || t('smsQuery.noContent') }}</p>
+                <p
+                  v-if="result.sms_content"
+                  class="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 dark:text-dark-200"
+                >
+                  {{ result.sms_content }}
+                </p>
+                <p v-else-if="result.status === 'pending'" class="text-sm text-gray-500 dark:text-dark-400">
+                  {{ t('smsQuery.waitingCode') }}
+                </p>
+                <p v-else class="text-sm text-gray-500 dark:text-dark-400">{{ t('smsQuery.noContent') }}</p>
               </div>
             </div>
           </div>
@@ -171,7 +210,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
-import { queryByOrderNo, type SmsOrderResponse } from '@/api/smsQuery'
+import { refreshOrder, type SmsOrderResponse } from '@/api/smsQuery'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -217,15 +256,15 @@ async function doQuery() {
 
   loading.value = true
   error.value = ''
-  result.value = null
   queried.value = true
 
   try {
-    result.value = await queryByOrderNo(no)
+    result.value = await refreshOrder(no)
   } catch (err: any) {
     if (err?.status === 404 || err?.code === 'SMS_ORDER_NOT_FOUND') {
-      // Not found — show empty state, no error
       result.value = null
+    } else if (err?.code === 'SMS_ORDER_FETCH_FAILED') {
+      error.value = t('smsQuery.fetchFailed')
     } else {
       error.value = err?.message || t('smsQuery.queryError')
     }
@@ -234,12 +273,20 @@ async function doQuery() {
   }
 }
 
+function canRefresh(status: string): boolean {
+  return status === 'created' || status === 'pending'
+}
+
 function statusClass(status: string): string {
   switch (status) {
     case 'received':
       return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
     case 'pending':
       return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+    case 'created':
+      return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+    case 'failed':
+      return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
     case 'expired':
       return 'bg-gray-100 text-gray-600 dark:bg-dark-700 dark:text-dark-400'
     default:

@@ -829,9 +829,11 @@ var (
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "order_no", Type: field.TypeString, Unique: true, Size: 100},
-		{Name: "phone_number", Type: field.TypeString, Size: 50},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true, Size: 50, Default: ""},
+		{Name: "hero_sms_id", Type: field.TypeString, Nullable: true, Size: 100, Default: ""},
 		{Name: "sms_content", Type: field.TypeString, Nullable: true, Default: "", SchemaType: map[string]string{"postgres": "text"}},
-		{Name: "status", Type: field.TypeString, Size: 20, Default: "pending"},
+		{Name: "status", Type: field.TypeString, Size: 20, Default: "created"},
+		{Name: "pending_at", Type: field.TypeTime, Nullable: true},
 	}
 	// SmsOrdersTable holds the schema information for the "sms_orders" table.
 	SmsOrdersTable = &schema.Table{
@@ -842,7 +844,7 @@ var (
 			{
 				Name:    "smsorder_status",
 				Unique:  false,
-				Columns: []*schema.Column{SmsOrdersColumns[6]},
+				Columns: []*schema.Column{SmsOrdersColumns[7]},
 			},
 		},
 	}

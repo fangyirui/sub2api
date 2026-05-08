@@ -8,12 +8,13 @@ import (
 
 // SmsOrderResponse is the JSON response for an SMS order query.
 type SmsOrderResponse struct {
-	OrderNo     string    `json:"order_no"`
-	PhoneNumber string    `json:"phone_number"`
-	SmsContent  string    `json:"sms_content"`
-	Status      string    `json:"status"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	OrderNo     string     `json:"order_no"`
+	PhoneNumber string     `json:"phone_number"`
+	SmsContent  string     `json:"sms_content"`
+	Status      string     `json:"status"`
+	PendingAt   *time.Time `json:"pending_at,omitempty"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
 // SmsOrderFromService maps a service-layer SmsOrder to the DTO response.
@@ -26,6 +27,7 @@ func SmsOrderFromService(o *service.SmsOrder) *SmsOrderResponse {
 		PhoneNumber: o.PhoneNumber,
 		SmsContent:  o.SmsContent,
 		Status:      o.Status,
+		PendingAt:   o.PendingAt,
 		CreatedAt:   o.CreatedAt,
 		UpdatedAt:   o.UpdatedAt,
 	}

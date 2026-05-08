@@ -62,6 +62,28 @@ func (_c *SmsOrderCreate) SetPhoneNumber(v string) *SmsOrderCreate {
 	return _c
 }
 
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (_c *SmsOrderCreate) SetNillablePhoneNumber(v *string) *SmsOrderCreate {
+	if v != nil {
+		_c.SetPhoneNumber(*v)
+	}
+	return _c
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (_c *SmsOrderCreate) SetHeroSmsID(v string) *SmsOrderCreate {
+	_c.mutation.SetHeroSmsID(v)
+	return _c
+}
+
+// SetNillableHeroSmsID sets the "hero_sms_id" field if the given value is not nil.
+func (_c *SmsOrderCreate) SetNillableHeroSmsID(v *string) *SmsOrderCreate {
+	if v != nil {
+		_c.SetHeroSmsID(*v)
+	}
+	return _c
+}
+
 // SetSmsContent sets the "sms_content" field.
 func (_c *SmsOrderCreate) SetSmsContent(v string) *SmsOrderCreate {
 	_c.mutation.SetSmsContent(v)
@@ -86,6 +108,20 @@ func (_c *SmsOrderCreate) SetStatus(v string) *SmsOrderCreate {
 func (_c *SmsOrderCreate) SetNillableStatus(v *string) *SmsOrderCreate {
 	if v != nil {
 		_c.SetStatus(*v)
+	}
+	return _c
+}
+
+// SetPendingAt sets the "pending_at" field.
+func (_c *SmsOrderCreate) SetPendingAt(v time.Time) *SmsOrderCreate {
+	_c.mutation.SetPendingAt(v)
+	return _c
+}
+
+// SetNillablePendingAt sets the "pending_at" field if the given value is not nil.
+func (_c *SmsOrderCreate) SetNillablePendingAt(v *time.Time) *SmsOrderCreate {
+	if v != nil {
+		_c.SetPendingAt(*v)
 	}
 	return _c
 }
@@ -133,6 +169,14 @@ func (_c *SmsOrderCreate) defaults() {
 		v := smsorder.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.PhoneNumber(); !ok {
+		v := smsorder.DefaultPhoneNumber
+		_c.mutation.SetPhoneNumber(v)
+	}
+	if _, ok := _c.mutation.HeroSmsID(); !ok {
+		v := smsorder.DefaultHeroSmsID
+		_c.mutation.SetHeroSmsID(v)
+	}
 	if _, ok := _c.mutation.SmsContent(); !ok {
 		v := smsorder.DefaultSmsContent
 		_c.mutation.SetSmsContent(v)
@@ -159,12 +203,14 @@ func (_c *SmsOrderCreate) check() error {
 			return &ValidationError{Name: "order_no", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.order_no": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.PhoneNumber(); !ok {
-		return &ValidationError{Name: "phone_number", err: errors.New(`ent: missing required field "SmsOrder.phone_number"`)}
-	}
 	if v, ok := _c.mutation.PhoneNumber(); ok {
 		if err := smsorder.PhoneNumberValidator(v); err != nil {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.phone_number": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.HeroSmsID(); ok {
+		if err := smsorder.HeroSmsIDValidator(v); err != nil {
+			return &ValidationError{Name: "hero_sms_id", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.hero_sms_id": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Status(); !ok {
@@ -218,6 +264,10 @@ func (_c *SmsOrderCreate) createSpec() (*SmsOrder, *sqlgraph.CreateSpec) {
 		_spec.SetField(smsorder.FieldPhoneNumber, field.TypeString, value)
 		_node.PhoneNumber = value
 	}
+	if value, ok := _c.mutation.HeroSmsID(); ok {
+		_spec.SetField(smsorder.FieldHeroSmsID, field.TypeString, value)
+		_node.HeroSmsID = value
+	}
 	if value, ok := _c.mutation.SmsContent(); ok {
 		_spec.SetField(smsorder.FieldSmsContent, field.TypeString, value)
 		_node.SmsContent = value
@@ -225,6 +275,10 @@ func (_c *SmsOrderCreate) createSpec() (*SmsOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(smsorder.FieldStatus, field.TypeString, value)
 		_node.Status = value
+	}
+	if value, ok := _c.mutation.PendingAt(); ok {
+		_spec.SetField(smsorder.FieldPendingAt, field.TypeTime, value)
+		_node.PendingAt = &value
 	}
 	return _node, _spec
 }
@@ -314,6 +368,30 @@ func (u *SmsOrderUpsert) UpdatePhoneNumber() *SmsOrderUpsert {
 	return u
 }
 
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (u *SmsOrderUpsert) ClearPhoneNumber() *SmsOrderUpsert {
+	u.SetNull(smsorder.FieldPhoneNumber)
+	return u
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (u *SmsOrderUpsert) SetHeroSmsID(v string) *SmsOrderUpsert {
+	u.Set(smsorder.FieldHeroSmsID, v)
+	return u
+}
+
+// UpdateHeroSmsID sets the "hero_sms_id" field to the value that was provided on create.
+func (u *SmsOrderUpsert) UpdateHeroSmsID() *SmsOrderUpsert {
+	u.SetExcluded(smsorder.FieldHeroSmsID)
+	return u
+}
+
+// ClearHeroSmsID clears the value of the "hero_sms_id" field.
+func (u *SmsOrderUpsert) ClearHeroSmsID() *SmsOrderUpsert {
+	u.SetNull(smsorder.FieldHeroSmsID)
+	return u
+}
+
 // SetSmsContent sets the "sms_content" field.
 func (u *SmsOrderUpsert) SetSmsContent(v string) *SmsOrderUpsert {
 	u.Set(smsorder.FieldSmsContent, v)
@@ -341,6 +419,24 @@ func (u *SmsOrderUpsert) SetStatus(v string) *SmsOrderUpsert {
 // UpdateStatus sets the "status" field to the value that was provided on create.
 func (u *SmsOrderUpsert) UpdateStatus() *SmsOrderUpsert {
 	u.SetExcluded(smsorder.FieldStatus)
+	return u
+}
+
+// SetPendingAt sets the "pending_at" field.
+func (u *SmsOrderUpsert) SetPendingAt(v time.Time) *SmsOrderUpsert {
+	u.Set(smsorder.FieldPendingAt, v)
+	return u
+}
+
+// UpdatePendingAt sets the "pending_at" field to the value that was provided on create.
+func (u *SmsOrderUpsert) UpdatePendingAt() *SmsOrderUpsert {
+	u.SetExcluded(smsorder.FieldPendingAt)
+	return u
+}
+
+// ClearPendingAt clears the value of the "pending_at" field.
+func (u *SmsOrderUpsert) ClearPendingAt() *SmsOrderUpsert {
+	u.SetNull(smsorder.FieldPendingAt)
 	return u
 }
 
@@ -431,6 +527,34 @@ func (u *SmsOrderUpsertOne) UpdatePhoneNumber() *SmsOrderUpsertOne {
 	})
 }
 
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (u *SmsOrderUpsertOne) ClearPhoneNumber() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.ClearPhoneNumber()
+	})
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (u *SmsOrderUpsertOne) SetHeroSmsID(v string) *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetHeroSmsID(v)
+	})
+}
+
+// UpdateHeroSmsID sets the "hero_sms_id" field to the value that was provided on create.
+func (u *SmsOrderUpsertOne) UpdateHeroSmsID() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdateHeroSmsID()
+	})
+}
+
+// ClearHeroSmsID clears the value of the "hero_sms_id" field.
+func (u *SmsOrderUpsertOne) ClearHeroSmsID() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.ClearHeroSmsID()
+	})
+}
+
 // SetSmsContent sets the "sms_content" field.
 func (u *SmsOrderUpsertOne) SetSmsContent(v string) *SmsOrderUpsertOne {
 	return u.Update(func(s *SmsOrderUpsert) {
@@ -463,6 +587,27 @@ func (u *SmsOrderUpsertOne) SetStatus(v string) *SmsOrderUpsertOne {
 func (u *SmsOrderUpsertOne) UpdateStatus() *SmsOrderUpsertOne {
 	return u.Update(func(s *SmsOrderUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetPendingAt sets the "pending_at" field.
+func (u *SmsOrderUpsertOne) SetPendingAt(v time.Time) *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetPendingAt(v)
+	})
+}
+
+// UpdatePendingAt sets the "pending_at" field to the value that was provided on create.
+func (u *SmsOrderUpsertOne) UpdatePendingAt() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdatePendingAt()
+	})
+}
+
+// ClearPendingAt clears the value of the "pending_at" field.
+func (u *SmsOrderUpsertOne) ClearPendingAt() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.ClearPendingAt()
 	})
 }
 
@@ -719,6 +864,34 @@ func (u *SmsOrderUpsertBulk) UpdatePhoneNumber() *SmsOrderUpsertBulk {
 	})
 }
 
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (u *SmsOrderUpsertBulk) ClearPhoneNumber() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.ClearPhoneNumber()
+	})
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (u *SmsOrderUpsertBulk) SetHeroSmsID(v string) *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetHeroSmsID(v)
+	})
+}
+
+// UpdateHeroSmsID sets the "hero_sms_id" field to the value that was provided on create.
+func (u *SmsOrderUpsertBulk) UpdateHeroSmsID() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdateHeroSmsID()
+	})
+}
+
+// ClearHeroSmsID clears the value of the "hero_sms_id" field.
+func (u *SmsOrderUpsertBulk) ClearHeroSmsID() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.ClearHeroSmsID()
+	})
+}
+
 // SetSmsContent sets the "sms_content" field.
 func (u *SmsOrderUpsertBulk) SetSmsContent(v string) *SmsOrderUpsertBulk {
 	return u.Update(func(s *SmsOrderUpsert) {
@@ -751,6 +924,27 @@ func (u *SmsOrderUpsertBulk) SetStatus(v string) *SmsOrderUpsertBulk {
 func (u *SmsOrderUpsertBulk) UpdateStatus() *SmsOrderUpsertBulk {
 	return u.Update(func(s *SmsOrderUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetPendingAt sets the "pending_at" field.
+func (u *SmsOrderUpsertBulk) SetPendingAt(v time.Time) *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetPendingAt(v)
+	})
+}
+
+// UpdatePendingAt sets the "pending_at" field to the value that was provided on create.
+func (u *SmsOrderUpsertBulk) UpdatePendingAt() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdatePendingAt()
+	})
+}
+
+// ClearPendingAt clears the value of the "pending_at" field.
+func (u *SmsOrderUpsertBulk) ClearPendingAt() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.ClearPendingAt()
 	})
 }
 

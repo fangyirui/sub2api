@@ -35,7 +35,12 @@ func (SmsOrder) Fields() []ent.Field {
 			Unique(),
 		field.String("phone_number").
 			MaxLen(50).
-			NotEmpty(),
+			Optional().
+			Default(""),
+		field.String("hero_sms_id").
+			MaxLen(100).
+			Optional().
+			Default(""),
 		field.String("sms_content").
 			SchemaType(map[string]string{
 				dialect.Postgres: "text",
@@ -44,7 +49,10 @@ func (SmsOrder) Fields() []ent.Field {
 			Default(""),
 		field.String("status").
 			MaxLen(20).
-			Default("pending"),
+			Default("created"),
+		field.Time("pending_at").
+			Optional().
+			Nillable(),
 	}
 }
 

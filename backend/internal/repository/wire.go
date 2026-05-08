@@ -135,6 +135,7 @@ var ProviderSet = wire.NewSet(
 	NewGeminiOAuthClient,
 	NewGeminiCliCodeAssistClient,
 	NewGeminiDriveClient,
+	NewHeroSmsClient,
 
 	ProvideEnt,
 	ProvideSQLDB,

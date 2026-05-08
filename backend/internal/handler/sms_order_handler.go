@@ -37,3 +37,21 @@ func (h *SmsOrderHandler) Query(c *gin.Context) {
 
 	response.Success(c, dto.SmsOrderFromService(order))
 }
+
+// Refresh triggers a manual refresh of SMS content for an order.
+// POST /api/v1/sms-orders/:order_no/refresh
+func (h *SmsOrderHandler) Refresh(c *gin.Context) {
+	orderNo := c.Param("order_no")
+	if orderNo == "" {
+		response.BadRequest(c, "Order number is required")
+		return
+	}
+
+	order, err := h.smsOrderService.RefreshSmsContent(c.Request.Context(), orderNo)
+	if err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+
+	response.Success(c, dto.SmsOrderFromService(order))
+}

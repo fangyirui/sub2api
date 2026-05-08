@@ -21167,8 +21167,10 @@ type SmsOrderMutation struct {
 	updated_at    *time.Time
 	order_no      *string
 	phone_number  *string
+	hero_sms_id   *string
 	sms_content   *string
 	status        *string
+	pending_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*SmsOrder, error)
@@ -21412,9 +21414,71 @@ func (m *SmsOrderMutation) OldPhoneNumber(ctx context.Context) (v string, err er
 	return oldValue.PhoneNumber, nil
 }
 
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (m *SmsOrderMutation) ClearPhoneNumber() {
+	m.phone_number = nil
+	m.clearedFields[smsorder.FieldPhoneNumber] = struct{}{}
+}
+
+// PhoneNumberCleared returns if the "phone_number" field was cleared in this mutation.
+func (m *SmsOrderMutation) PhoneNumberCleared() bool {
+	_, ok := m.clearedFields[smsorder.FieldPhoneNumber]
+	return ok
+}
+
 // ResetPhoneNumber resets all changes to the "phone_number" field.
 func (m *SmsOrderMutation) ResetPhoneNumber() {
 	m.phone_number = nil
+	delete(m.clearedFields, smsorder.FieldPhoneNumber)
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (m *SmsOrderMutation) SetHeroSmsID(s string) {
+	m.hero_sms_id = &s
+}
+
+// HeroSmsID returns the value of the "hero_sms_id" field in the mutation.
+func (m *SmsOrderMutation) HeroSmsID() (r string, exists bool) {
+	v := m.hero_sms_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeroSmsID returns the old "hero_sms_id" field's value of the SmsOrder entity.
+// If the SmsOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SmsOrderMutation) OldHeroSmsID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHeroSmsID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHeroSmsID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeroSmsID: %w", err)
+	}
+	return oldValue.HeroSmsID, nil
+}
+
+// ClearHeroSmsID clears the value of the "hero_sms_id" field.
+func (m *SmsOrderMutation) ClearHeroSmsID() {
+	m.hero_sms_id = nil
+	m.clearedFields[smsorder.FieldHeroSmsID] = struct{}{}
+}
+
+// HeroSmsIDCleared returns if the "hero_sms_id" field was cleared in this mutation.
+func (m *SmsOrderMutation) HeroSmsIDCleared() bool {
+	_, ok := m.clearedFields[smsorder.FieldHeroSmsID]
+	return ok
+}
+
+// ResetHeroSmsID resets all changes to the "hero_sms_id" field.
+func (m *SmsOrderMutation) ResetHeroSmsID() {
+	m.hero_sms_id = nil
+	delete(m.clearedFields, smsorder.FieldHeroSmsID)
 }
 
 // SetSmsContent sets the "sms_content" field.
@@ -21502,6 +21566,55 @@ func (m *SmsOrderMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetPendingAt sets the "pending_at" field.
+func (m *SmsOrderMutation) SetPendingAt(t time.Time) {
+	m.pending_at = &t
+}
+
+// PendingAt returns the value of the "pending_at" field in the mutation.
+func (m *SmsOrderMutation) PendingAt() (r time.Time, exists bool) {
+	v := m.pending_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPendingAt returns the old "pending_at" field's value of the SmsOrder entity.
+// If the SmsOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SmsOrderMutation) OldPendingAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPendingAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPendingAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPendingAt: %w", err)
+	}
+	return oldValue.PendingAt, nil
+}
+
+// ClearPendingAt clears the value of the "pending_at" field.
+func (m *SmsOrderMutation) ClearPendingAt() {
+	m.pending_at = nil
+	m.clearedFields[smsorder.FieldPendingAt] = struct{}{}
+}
+
+// PendingAtCleared returns if the "pending_at" field was cleared in this mutation.
+func (m *SmsOrderMutation) PendingAtCleared() bool {
+	_, ok := m.clearedFields[smsorder.FieldPendingAt]
+	return ok
+}
+
+// ResetPendingAt resets all changes to the "pending_at" field.
+func (m *SmsOrderMutation) ResetPendingAt() {
+	m.pending_at = nil
+	delete(m.clearedFields, smsorder.FieldPendingAt)
+}
+
 // Where appends a list predicates to the SmsOrderMutation builder.
 func (m *SmsOrderMutation) Where(ps ...predicate.SmsOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -21536,7 +21649,7 @@ func (m *SmsOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SmsOrderMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, smsorder.FieldCreatedAt)
 	}
@@ -21549,11 +21662,17 @@ func (m *SmsOrderMutation) Fields() []string {
 	if m.phone_number != nil {
 		fields = append(fields, smsorder.FieldPhoneNumber)
 	}
+	if m.hero_sms_id != nil {
+		fields = append(fields, smsorder.FieldHeroSmsID)
+	}
 	if m.sms_content != nil {
 		fields = append(fields, smsorder.FieldSmsContent)
 	}
 	if m.status != nil {
 		fields = append(fields, smsorder.FieldStatus)
+	}
+	if m.pending_at != nil {
+		fields = append(fields, smsorder.FieldPendingAt)
 	}
 	return fields
 }
@@ -21571,10 +21690,14 @@ func (m *SmsOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderNo()
 	case smsorder.FieldPhoneNumber:
 		return m.PhoneNumber()
+	case smsorder.FieldHeroSmsID:
+		return m.HeroSmsID()
 	case smsorder.FieldSmsContent:
 		return m.SmsContent()
 	case smsorder.FieldStatus:
 		return m.Status()
+	case smsorder.FieldPendingAt:
+		return m.PendingAt()
 	}
 	return nil, false
 }
@@ -21592,10 +21715,14 @@ func (m *SmsOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldOrderNo(ctx)
 	case smsorder.FieldPhoneNumber:
 		return m.OldPhoneNumber(ctx)
+	case smsorder.FieldHeroSmsID:
+		return m.OldHeroSmsID(ctx)
 	case smsorder.FieldSmsContent:
 		return m.OldSmsContent(ctx)
 	case smsorder.FieldStatus:
 		return m.OldStatus(ctx)
+	case smsorder.FieldPendingAt:
+		return m.OldPendingAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown SmsOrder field %s", name)
 }
@@ -21633,6 +21760,13 @@ func (m *SmsOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhoneNumber(v)
 		return nil
+	case smsorder.FieldHeroSmsID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeroSmsID(v)
+		return nil
 	case smsorder.FieldSmsContent:
 		v, ok := value.(string)
 		if !ok {
@@ -21646,6 +21780,13 @@ func (m *SmsOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case smsorder.FieldPendingAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPendingAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SmsOrder field %s", name)
@@ -21677,8 +21818,17 @@ func (m *SmsOrderMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *SmsOrderMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(smsorder.FieldPhoneNumber) {
+		fields = append(fields, smsorder.FieldPhoneNumber)
+	}
+	if m.FieldCleared(smsorder.FieldHeroSmsID) {
+		fields = append(fields, smsorder.FieldHeroSmsID)
+	}
 	if m.FieldCleared(smsorder.FieldSmsContent) {
 		fields = append(fields, smsorder.FieldSmsContent)
+	}
+	if m.FieldCleared(smsorder.FieldPendingAt) {
+		fields = append(fields, smsorder.FieldPendingAt)
 	}
 	return fields
 }
@@ -21694,8 +21844,17 @@ func (m *SmsOrderMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *SmsOrderMutation) ClearField(name string) error {
 	switch name {
+	case smsorder.FieldPhoneNumber:
+		m.ClearPhoneNumber()
+		return nil
+	case smsorder.FieldHeroSmsID:
+		m.ClearHeroSmsID()
+		return nil
 	case smsorder.FieldSmsContent:
 		m.ClearSmsContent()
+		return nil
+	case smsorder.FieldPendingAt:
+		m.ClearPendingAt()
 		return nil
 	}
 	return fmt.Errorf("unknown SmsOrder nullable field %s", name)
@@ -21717,11 +21876,17 @@ func (m *SmsOrderMutation) ResetField(name string) error {
 	case smsorder.FieldPhoneNumber:
 		m.ResetPhoneNumber()
 		return nil
+	case smsorder.FieldHeroSmsID:
+		m.ResetHeroSmsID()
+		return nil
 	case smsorder.FieldSmsContent:
 		m.ResetSmsContent()
 		return nil
 	case smsorder.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case smsorder.FieldPendingAt:
+		m.ResetPendingAt()
 		return nil
 	}
 	return fmt.Errorf("unknown SmsOrder field %s", name)

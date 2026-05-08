@@ -83,6 +83,16 @@ type Config struct {
 	Gemini                  GeminiConfig                  `mapstructure:"gemini"`
 	Update                  UpdateConfig                  `mapstructure:"update"`
 	Idempotency             IdempotencyConfig             `mapstructure:"idempotency"`
+	HeroSms                 HeroSmsConfig                 `mapstructure:"hero_sms"`
+}
+
+type HeroSmsConfig struct {
+	APIKey             string `mapstructure:"api_key"`
+	BaseURL            string `mapstructure:"base_url"`
+	Service            string `mapstructure:"service"`
+	Country            string `mapstructure:"country"`
+	PollIntervalSeconds int   `mapstructure:"poll_interval_seconds"`
+	PollTimeoutMinutes  int   `mapstructure:"poll_timeout_minutes"`
 }
 
 type LogConfig struct {
@@ -1486,6 +1496,14 @@ func setDefaults() {
 	// Subscription Maintenance (bounded queue + worker pool)
 	viper.SetDefault("subscription_maintenance.worker_count", 2)
 	viper.SetDefault("subscription_maintenance.queue_size", 1024)
+
+	// HeroSms
+	viper.SetDefault("hero_sms.api_key", "")
+	viper.SetDefault("hero_sms.base_url", "https://hero-sms.com/stubs/handler_api.php")
+	viper.SetDefault("hero_sms.service", "acz")
+	viper.SetDefault("hero_sms.country", "78")
+	viper.SetDefault("hero_sms.poll_interval_seconds", 5)
+	viper.SetDefault("hero_sms.poll_timeout_minutes", 10)
 
 }
 

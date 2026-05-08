@@ -21,10 +21,14 @@ const (
 	FieldOrderNo = "order_no"
 	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
 	FieldPhoneNumber = "phone_number"
+	// FieldHeroSmsID holds the string denoting the hero_sms_id field in the database.
+	FieldHeroSmsID = "hero_sms_id"
 	// FieldSmsContent holds the string denoting the sms_content field in the database.
 	FieldSmsContent = "sms_content"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldPendingAt holds the string denoting the pending_at field in the database.
+	FieldPendingAt = "pending_at"
 	// Table holds the table name of the smsorder in the database.
 	Table = "sms_orders"
 )
@@ -36,8 +40,10 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldOrderNo,
 	FieldPhoneNumber,
+	FieldHeroSmsID,
 	FieldSmsContent,
 	FieldStatus,
+	FieldPendingAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -59,8 +65,14 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// OrderNoValidator is a validator for the "order_no" field. It is called by the builders before save.
 	OrderNoValidator func(string) error
+	// DefaultPhoneNumber holds the default value on creation for the "phone_number" field.
+	DefaultPhoneNumber string
 	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
 	PhoneNumberValidator func(string) error
+	// DefaultHeroSmsID holds the default value on creation for the "hero_sms_id" field.
+	DefaultHeroSmsID string
+	// HeroSmsIDValidator is a validator for the "hero_sms_id" field. It is called by the builders before save.
+	HeroSmsIDValidator func(string) error
 	// DefaultSmsContent holds the default value on creation for the "sms_content" field.
 	DefaultSmsContent string
 	// DefaultStatus holds the default value on creation for the "status" field.
@@ -97,6 +109,11 @@ func ByPhoneNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPhoneNumber, opts...).ToFunc()
 }
 
+// ByHeroSmsID orders the results by the hero_sms_id field.
+func ByHeroSmsID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHeroSmsID, opts...).ToFunc()
+}
+
 // BySmsContent orders the results by the sms_content field.
 func BySmsContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSmsContent, opts...).ToFunc()
@@ -105,4 +122,9 @@ func BySmsContent(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByPendingAt orders the results by the pending_at field.
+func ByPendingAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPendingAt, opts...).ToFunc()
 }

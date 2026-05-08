@@ -74,6 +74,11 @@ func PhoneNumber(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldPhoneNumber, v))
 }
 
+// HeroSmsID applies equality check predicate on the "hero_sms_id" field. It's identical to HeroSmsIDEQ.
+func HeroSmsID(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldHeroSmsID, v))
+}
+
 // SmsContent applies equality check predicate on the "sms_content" field. It's identical to SmsContentEQ.
 func SmsContent(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldSmsContent, v))
@@ -82,6 +87,11 @@ func SmsContent(v string) predicate.SmsOrder {
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldStatus, v))
+}
+
+// PendingAt applies equality check predicate on the "pending_at" field. It's identical to PendingAtEQ.
+func PendingAt(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldPendingAt, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -284,6 +294,16 @@ func PhoneNumberHasSuffix(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldHasSuffix(FieldPhoneNumber, v))
 }
 
+// PhoneNumberIsNil applies the IsNil predicate on the "phone_number" field.
+func PhoneNumberIsNil() predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIsNull(FieldPhoneNumber))
+}
+
+// PhoneNumberNotNil applies the NotNil predicate on the "phone_number" field.
+func PhoneNumberNotNil() predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotNull(FieldPhoneNumber))
+}
+
 // PhoneNumberEqualFold applies the EqualFold predicate on the "phone_number" field.
 func PhoneNumberEqualFold(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEqualFold(FieldPhoneNumber, v))
@@ -292,6 +312,81 @@ func PhoneNumberEqualFold(v string) predicate.SmsOrder {
 // PhoneNumberContainsFold applies the ContainsFold predicate on the "phone_number" field.
 func PhoneNumberContainsFold(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldContainsFold(FieldPhoneNumber, v))
+}
+
+// HeroSmsIDEQ applies the EQ predicate on the "hero_sms_id" field.
+func HeroSmsIDEQ(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDNEQ applies the NEQ predicate on the "hero_sms_id" field.
+func HeroSmsIDNEQ(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNEQ(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDIn applies the In predicate on the "hero_sms_id" field.
+func HeroSmsIDIn(vs ...string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIn(FieldHeroSmsID, vs...))
+}
+
+// HeroSmsIDNotIn applies the NotIn predicate on the "hero_sms_id" field.
+func HeroSmsIDNotIn(vs ...string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotIn(FieldHeroSmsID, vs...))
+}
+
+// HeroSmsIDGT applies the GT predicate on the "hero_sms_id" field.
+func HeroSmsIDGT(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGT(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDGTE applies the GTE predicate on the "hero_sms_id" field.
+func HeroSmsIDGTE(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGTE(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDLT applies the LT predicate on the "hero_sms_id" field.
+func HeroSmsIDLT(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLT(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDLTE applies the LTE predicate on the "hero_sms_id" field.
+func HeroSmsIDLTE(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLTE(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDContains applies the Contains predicate on the "hero_sms_id" field.
+func HeroSmsIDContains(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldContains(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDHasPrefix applies the HasPrefix predicate on the "hero_sms_id" field.
+func HeroSmsIDHasPrefix(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldHasPrefix(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDHasSuffix applies the HasSuffix predicate on the "hero_sms_id" field.
+func HeroSmsIDHasSuffix(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldHasSuffix(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDIsNil applies the IsNil predicate on the "hero_sms_id" field.
+func HeroSmsIDIsNil() predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIsNull(FieldHeroSmsID))
+}
+
+// HeroSmsIDNotNil applies the NotNil predicate on the "hero_sms_id" field.
+func HeroSmsIDNotNil() predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotNull(FieldHeroSmsID))
+}
+
+// HeroSmsIDEqualFold applies the EqualFold predicate on the "hero_sms_id" field.
+func HeroSmsIDEqualFold(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEqualFold(FieldHeroSmsID, v))
+}
+
+// HeroSmsIDContainsFold applies the ContainsFold predicate on the "hero_sms_id" field.
+func HeroSmsIDContainsFold(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldContainsFold(FieldHeroSmsID, v))
 }
 
 // SmsContentEQ applies the EQ predicate on the "sms_content" field.
@@ -432,6 +527,56 @@ func StatusEqualFold(v string) predicate.SmsOrder {
 // StatusContainsFold applies the ContainsFold predicate on the "status" field.
 func StatusContainsFold(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldContainsFold(FieldStatus, v))
+}
+
+// PendingAtEQ applies the EQ predicate on the "pending_at" field.
+func PendingAtEQ(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldPendingAt, v))
+}
+
+// PendingAtNEQ applies the NEQ predicate on the "pending_at" field.
+func PendingAtNEQ(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNEQ(FieldPendingAt, v))
+}
+
+// PendingAtIn applies the In predicate on the "pending_at" field.
+func PendingAtIn(vs ...time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIn(FieldPendingAt, vs...))
+}
+
+// PendingAtNotIn applies the NotIn predicate on the "pending_at" field.
+func PendingAtNotIn(vs ...time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotIn(FieldPendingAt, vs...))
+}
+
+// PendingAtGT applies the GT predicate on the "pending_at" field.
+func PendingAtGT(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGT(FieldPendingAt, v))
+}
+
+// PendingAtGTE applies the GTE predicate on the "pending_at" field.
+func PendingAtGTE(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGTE(FieldPendingAt, v))
+}
+
+// PendingAtLT applies the LT predicate on the "pending_at" field.
+func PendingAtLT(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLT(FieldPendingAt, v))
+}
+
+// PendingAtLTE applies the LTE predicate on the "pending_at" field.
+func PendingAtLTE(v time.Time) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLTE(FieldPendingAt, v))
+}
+
+// PendingAtIsNil applies the IsNil predicate on the "pending_at" field.
+func PendingAtIsNil() predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIsNull(FieldPendingAt))
+}
+
+// PendingAtNotNil applies the NotNil predicate on the "pending_at" field.
+func PendingAtNotNil() predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotNull(FieldPendingAt))
 }
 
 // And groups predicates with the AND operator between them.

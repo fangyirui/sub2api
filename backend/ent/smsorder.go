@@ -25,10 +25,14 @@ type SmsOrder struct {
 	OrderNo string `json:"order_no,omitempty"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber string `json:"phone_number,omitempty"`
+	// HeroSmsID holds the value of the "hero_sms_id" field.
+	HeroSmsID string `json:"hero_sms_id,omitempty"`
 	// SmsContent holds the value of the "sms_content" field.
 	SmsContent string `json:"sms_content,omitempty"`
 	// Status holds the value of the "status" field.
-	Status       string `json:"status,omitempty"`
+	Status string `json:"status,omitempty"`
+	// PendingAt holds the value of the "pending_at" field.
+	PendingAt    *time.Time `json:"pending_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -39,9 +43,9 @@ func (*SmsOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case smsorder.FieldID:
 			values[i] = new(sql.NullInt64)
-		case smsorder.FieldOrderNo, smsorder.FieldPhoneNumber, smsorder.FieldSmsContent, smsorder.FieldStatus:
+		case smsorder.FieldOrderNo, smsorder.FieldPhoneNumber, smsorder.FieldHeroSmsID, smsorder.FieldSmsContent, smsorder.FieldStatus:
 			values[i] = new(sql.NullString)
-		case smsorder.FieldCreatedAt, smsorder.FieldUpdatedAt:
+		case smsorder.FieldCreatedAt, smsorder.FieldUpdatedAt, smsorder.FieldPendingAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -88,6 +92,12 @@ func (_m *SmsOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.PhoneNumber = value.String
 			}
+		case smsorder.FieldHeroSmsID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field hero_sms_id", values[i])
+			} else if value.Valid {
+				_m.HeroSmsID = value.String
+			}
 		case smsorder.FieldSmsContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sms_content", values[i])
@@ -99,6 +109,13 @@ func (_m *SmsOrder) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				_m.Status = value.String
+			}
+		case smsorder.FieldPendingAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field pending_at", values[i])
+			} else if value.Valid {
+				_m.PendingAt = new(time.Time)
+				*_m.PendingAt = value.Time
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -148,11 +165,19 @@ func (_m *SmsOrder) String() string {
 	builder.WriteString("phone_number=")
 	builder.WriteString(_m.PhoneNumber)
 	builder.WriteString(", ")
+	builder.WriteString("hero_sms_id=")
+	builder.WriteString(_m.HeroSmsID)
+	builder.WriteString(", ")
 	builder.WriteString("sms_content=")
 	builder.WriteString(_m.SmsContent)
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(_m.Status)
+	builder.WriteString(", ")
+	if v := _m.PendingAt; v != nil {
+		builder.WriteString("pending_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

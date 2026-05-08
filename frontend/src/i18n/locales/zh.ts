@@ -344,6 +344,7 @@ export default {
     redeemCodes: '兑换码',
     ops: '运维监控',
     promoCodes: '优惠码',
+    smsOrders: 'SMS 订单',
     settings: '系统设置',
     myAccount: '我的账户',
     lightMode: '浅色模式',
@@ -3445,6 +3446,41 @@ export default {
     },
 
     // Promo Codes
+    smsOrders: {
+      title: 'SMS 订单管理',
+      description: '生成 SMS 订单号，客户使用订单号在线获取手机号和验证码',
+      count: '数量',
+      generate: '生成订单',
+      generated: '已生成 {count} 个订单',
+      generateFailed: '生成失败，请稍后重试',
+      loadFailed: '加载失败，请稍后重试',
+      copy: '复制',
+      copyWithTemplate: '按模板复制订单号到剪贴板',
+      template: {
+        label: '复制模板',
+        placeholder: '请输入复制模板，使用 {order_no} 作为订单号占位符',
+        default: '您的订单号是：{order_no}',
+        hint: '保存在浏览器本地'
+      },
+      statusFilter: {
+        all: '全部状态'
+      },
+      status: {
+        created: '待获取',
+        pending: '等待短信',
+        received: '已接收',
+        expired: '已过期',
+        failed: '获取失败'
+      },
+      columns: {
+        orderNo: '订单号',
+        phone: '手机号',
+        status: '状态',
+        smsContent: '验证码内容',
+        createdAt: '创建时间',
+        actions: '操作'
+      }
+    },
     promo: {
       title: '优惠码管理',
       description: '创建和管理注册优惠码',
@@ -5662,17 +5698,23 @@ export default {
     subtitle: '输入订单号查询虚拟手机号和短信内容',
     inputPlaceholder: '请输入订单号',
     queryBtn: '查询',
+    refreshBtn: '刷新',
     orderNo: '订单号',
     phoneNumber: '手机号',
     smsContent: '短信内容',
     noContent: '暂无短信内容',
+    waitingPhone: '正在分配手机号...',
+    waitingCode: '已分配手机号，等待短信验证码',
     notFound: '未找到该订单，请检查订单号是否正确',
     queryError: '查询失败，请稍后重试',
+    fetchFailed: '获取手机号失败，请联系客服',
     footer: '请输入正确的订单号进行查询',
     status: {
-      pending: '等待中',
+      created: '待获取',
+      pending: '等待短信',
       received: '已接收',
       expired: '已过期',
+      failed: '获取失败',
     },
   },
 

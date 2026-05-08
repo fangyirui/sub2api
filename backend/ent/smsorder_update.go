@@ -62,6 +62,32 @@ func (_u *SmsOrderUpdate) SetNillablePhoneNumber(v *string) *SmsOrderUpdate {
 	return _u
 }
 
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (_u *SmsOrderUpdate) ClearPhoneNumber() *SmsOrderUpdate {
+	_u.mutation.ClearPhoneNumber()
+	return _u
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (_u *SmsOrderUpdate) SetHeroSmsID(v string) *SmsOrderUpdate {
+	_u.mutation.SetHeroSmsID(v)
+	return _u
+}
+
+// SetNillableHeroSmsID sets the "hero_sms_id" field if the given value is not nil.
+func (_u *SmsOrderUpdate) SetNillableHeroSmsID(v *string) *SmsOrderUpdate {
+	if v != nil {
+		_u.SetHeroSmsID(*v)
+	}
+	return _u
+}
+
+// ClearHeroSmsID clears the value of the "hero_sms_id" field.
+func (_u *SmsOrderUpdate) ClearHeroSmsID() *SmsOrderUpdate {
+	_u.mutation.ClearHeroSmsID()
+	return _u
+}
+
 // SetSmsContent sets the "sms_content" field.
 func (_u *SmsOrderUpdate) SetSmsContent(v string) *SmsOrderUpdate {
 	_u.mutation.SetSmsContent(v)
@@ -93,6 +119,26 @@ func (_u *SmsOrderUpdate) SetNillableStatus(v *string) *SmsOrderUpdate {
 	if v != nil {
 		_u.SetStatus(*v)
 	}
+	return _u
+}
+
+// SetPendingAt sets the "pending_at" field.
+func (_u *SmsOrderUpdate) SetPendingAt(v time.Time) *SmsOrderUpdate {
+	_u.mutation.SetPendingAt(v)
+	return _u
+}
+
+// SetNillablePendingAt sets the "pending_at" field if the given value is not nil.
+func (_u *SmsOrderUpdate) SetNillablePendingAt(v *time.Time) *SmsOrderUpdate {
+	if v != nil {
+		_u.SetPendingAt(*v)
+	}
+	return _u
+}
+
+// ClearPendingAt clears the value of the "pending_at" field.
+func (_u *SmsOrderUpdate) ClearPendingAt() *SmsOrderUpdate {
+	_u.mutation.ClearPendingAt()
 	return _u
 }
 
@@ -149,6 +195,11 @@ func (_u *SmsOrderUpdate) check() error {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.phone_number": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.HeroSmsID(); ok {
+		if err := smsorder.HeroSmsIDValidator(v); err != nil {
+			return &ValidationError{Name: "hero_sms_id", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.hero_sms_id": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := smsorder.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.status": %w`, err)}
@@ -178,6 +229,15 @@ func (_u *SmsOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.PhoneNumber(); ok {
 		_spec.SetField(smsorder.FieldPhoneNumber, field.TypeString, value)
 	}
+	if _u.mutation.PhoneNumberCleared() {
+		_spec.ClearField(smsorder.FieldPhoneNumber, field.TypeString)
+	}
+	if value, ok := _u.mutation.HeroSmsID(); ok {
+		_spec.SetField(smsorder.FieldHeroSmsID, field.TypeString, value)
+	}
+	if _u.mutation.HeroSmsIDCleared() {
+		_spec.ClearField(smsorder.FieldHeroSmsID, field.TypeString)
+	}
 	if value, ok := _u.mutation.SmsContent(); ok {
 		_spec.SetField(smsorder.FieldSmsContent, field.TypeString, value)
 	}
@@ -186,6 +246,12 @@ func (_u *SmsOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(smsorder.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.PendingAt(); ok {
+		_spec.SetField(smsorder.FieldPendingAt, field.TypeTime, value)
+	}
+	if _u.mutation.PendingAtCleared() {
+		_spec.ClearField(smsorder.FieldPendingAt, field.TypeTime)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -241,6 +307,32 @@ func (_u *SmsOrderUpdateOne) SetNillablePhoneNumber(v *string) *SmsOrderUpdateOn
 	return _u
 }
 
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (_u *SmsOrderUpdateOne) ClearPhoneNumber() *SmsOrderUpdateOne {
+	_u.mutation.ClearPhoneNumber()
+	return _u
+}
+
+// SetHeroSmsID sets the "hero_sms_id" field.
+func (_u *SmsOrderUpdateOne) SetHeroSmsID(v string) *SmsOrderUpdateOne {
+	_u.mutation.SetHeroSmsID(v)
+	return _u
+}
+
+// SetNillableHeroSmsID sets the "hero_sms_id" field if the given value is not nil.
+func (_u *SmsOrderUpdateOne) SetNillableHeroSmsID(v *string) *SmsOrderUpdateOne {
+	if v != nil {
+		_u.SetHeroSmsID(*v)
+	}
+	return _u
+}
+
+// ClearHeroSmsID clears the value of the "hero_sms_id" field.
+func (_u *SmsOrderUpdateOne) ClearHeroSmsID() *SmsOrderUpdateOne {
+	_u.mutation.ClearHeroSmsID()
+	return _u
+}
+
 // SetSmsContent sets the "sms_content" field.
 func (_u *SmsOrderUpdateOne) SetSmsContent(v string) *SmsOrderUpdateOne {
 	_u.mutation.SetSmsContent(v)
@@ -272,6 +364,26 @@ func (_u *SmsOrderUpdateOne) SetNillableStatus(v *string) *SmsOrderUpdateOne {
 	if v != nil {
 		_u.SetStatus(*v)
 	}
+	return _u
+}
+
+// SetPendingAt sets the "pending_at" field.
+func (_u *SmsOrderUpdateOne) SetPendingAt(v time.Time) *SmsOrderUpdateOne {
+	_u.mutation.SetPendingAt(v)
+	return _u
+}
+
+// SetNillablePendingAt sets the "pending_at" field if the given value is not nil.
+func (_u *SmsOrderUpdateOne) SetNillablePendingAt(v *time.Time) *SmsOrderUpdateOne {
+	if v != nil {
+		_u.SetPendingAt(*v)
+	}
+	return _u
+}
+
+// ClearPendingAt clears the value of the "pending_at" field.
+func (_u *SmsOrderUpdateOne) ClearPendingAt() *SmsOrderUpdateOne {
+	_u.mutation.ClearPendingAt()
 	return _u
 }
 
@@ -341,6 +453,11 @@ func (_u *SmsOrderUpdateOne) check() error {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.phone_number": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.HeroSmsID(); ok {
+		if err := smsorder.HeroSmsIDValidator(v); err != nil {
+			return &ValidationError{Name: "hero_sms_id", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.hero_sms_id": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := smsorder.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.status": %w`, err)}
@@ -387,6 +504,15 @@ func (_u *SmsOrderUpdateOne) sqlSave(ctx context.Context) (_node *SmsOrder, err 
 	if value, ok := _u.mutation.PhoneNumber(); ok {
 		_spec.SetField(smsorder.FieldPhoneNumber, field.TypeString, value)
 	}
+	if _u.mutation.PhoneNumberCleared() {
+		_spec.ClearField(smsorder.FieldPhoneNumber, field.TypeString)
+	}
+	if value, ok := _u.mutation.HeroSmsID(); ok {
+		_spec.SetField(smsorder.FieldHeroSmsID, field.TypeString, value)
+	}
+	if _u.mutation.HeroSmsIDCleared() {
+		_spec.ClearField(smsorder.FieldHeroSmsID, field.TypeString)
+	}
 	if value, ok := _u.mutation.SmsContent(); ok {
 		_spec.SetField(smsorder.FieldSmsContent, field.TypeString, value)
 	}
@@ -395,6 +521,12 @@ func (_u *SmsOrderUpdateOne) sqlSave(ctx context.Context) (_node *SmsOrder, err 
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(smsorder.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.PendingAt(); ok {
+		_spec.SetField(smsorder.FieldPendingAt, field.TypeTime, value)
+	}
+	if _u.mutation.PendingAtCleared() {
+		_spec.ClearField(smsorder.FieldPendingAt, field.TypeTime)
 	}
 	_node = &SmsOrder{config: _u.config}
 	_spec.Assign = _node.assignValues
