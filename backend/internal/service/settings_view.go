@@ -64,6 +64,7 @@ type SystemSettings struct {
 	DocURL                      string
 	HomeContent                 string
 	SmsQueryNotice              string
+	SmsOrderCopyTemplate        string
 	HideCcsImportButton         bool
 	PurchaseSubscriptionEnabled bool
 	PurchaseSubscriptionURL     string

@@ -3302,7 +3302,7 @@ export default {
         label: 'Copy template',
         placeholder: 'Enter copy template, use {order_no} as the order placeholder',
         default: 'Your order number: {order_no}',
-        hint: 'Saved locally in your browser'
+        hint: 'Configured in system settings'
       },
       statusFilter: {
         all: 'All statuses'
@@ -4464,6 +4464,9 @@ export default {
         smsQueryNotice: 'SMS Query Page Notice',
         smsQueryNoticePlaceholder: 'Enter notice text for the SMS query page. Leave empty to hide.',
         smsQueryNoticeHint: 'Displayed below the title on /sms-query page, used to inform customers about usage instructions and process.',
+        smsOrderCopyTemplate: 'SMS Order Copy Template',
+        smsOrderCopyTemplatePlaceholder: 'Enter copy template, use {order_no} as the order number placeholder',
+        smsOrderCopyTemplateHint: 'Used when copying order numbers on the SMS Orders admin page. Use {order_no} as placeholder.',
         hideCcsImportButton: 'Hide CCS Import Button',
         hideCcsImportButtonHint: 'When enabled, the "Import to CCS" button will be hidden on the API Keys page'
       },

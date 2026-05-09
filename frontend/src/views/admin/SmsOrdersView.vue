@@ -43,23 +43,6 @@
               </button>
             </div>
           </div>
-
-          <!-- Copy template editor -->
-          <div class="rounded-xl border border-gray-200 bg-white p-3 dark:border-dark-700 dark:bg-dark-800">
-            <div class="mb-2 flex items-center justify-between">
-              <label class="text-xs font-medium text-gray-500 dark:text-dark-400">
-                {{ t('admin.smsOrders.template.label') }}
-                <span class="ml-1 font-mono text-xs text-primary-600 dark:text-primary-400">{order_no}</span>
-              </label>
-              <span class="text-xs text-gray-400 dark:text-dark-500">{{ t('admin.smsOrders.template.hint') }}</span>
-            </div>
-            <textarea
-              v-model="copyTemplate"
-              rows="2"
-              class="input w-full font-mono text-sm"
-              :placeholder="t('admin.smsOrders.template.placeholder')"
-            ></textarea>
-          </div>
         </div>
       </template>
 
@@ -145,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import TablePageLayout from '@/components/layout/TablePageLayout.vue'
@@ -164,7 +147,6 @@ const { t } = useI18n()
 const appStore = useAppStore()
 const { copyToClipboard } = useClipboard()
 
-const TEMPLATE_STORAGE_KEY = 'sms-order-copy-template'
 const ORDER_PLACEHOLDER = '{order_no}'
 
 const orders = ref<SmsOrder[]>([])
@@ -172,6 +154,7 @@ const loading = ref(false)
 const generating = ref(false)
 const generateCount = ref(1)
 const copiedOrderNo = ref<string | null>(null)
+const copyTemplate = ref(t('admin.smsOrders.template.default'))
 
 const filters = reactive({ status: '' })
 const pagination = reactive({
@@ -179,26 +162,6 @@ const pagination = reactive({
   page_size: getPersistedPageSize(),
   total: 0
 })
-
-const copyTemplate = ref(loadTemplate())
-
-watch(copyTemplate, (val) => {
-  try {
-    localStorage.setItem(TEMPLATE_STORAGE_KEY, val)
-  } catch {
-    // ignore quota / private mode errors
-  }
-})
-
-function loadTemplate(): string {
-  try {
-    const stored = localStorage.getItem(TEMPLATE_STORAGE_KEY)
-    if (stored) return stored
-  } catch {
-    // ignore
-  }
-  return t('admin.smsOrders.template.default')
-}
 
 const filterStatusOptions = computed(() => [
   { value: '', label: t('admin.smsOrders.statusFilter.all') },
@@ -327,7 +290,15 @@ async function handleCopy(orderNo: string) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadOrders()
+  try {
+    const settings = await adminAPI.settings.getSettings()
+    if (settings.sms_order_copy_template) {
+      copyTemplate.value = settings.sms_order_copy_template
+    }
+  } catch {
+    // use default
+  }
 })
 </script>

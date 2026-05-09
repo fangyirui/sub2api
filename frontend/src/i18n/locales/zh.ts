@@ -3460,7 +3460,7 @@ export default {
         label: '复制模板',
         placeholder: '请输入复制模板，使用 {order_no} 作为订单号占位符',
         default: '您的订单号是：{order_no}',
-        hint: '保存在浏览器本地'
+        hint: '在系统设置中配置'
       },
       statusFilter: {
         all: '全部状态'
@@ -4626,6 +4626,9 @@ export default {
         smsQueryNotice: 'SMS 查询页公告',
         smsQueryNoticePlaceholder: '在此输入 SMS 查询页面的公告文本，留空则不显示',
         smsQueryNoticeHint: '显示在 /sms-query 页面标题下方，用于告知客户使用须知和流程说明',
+        smsOrderCopyTemplate: 'SMS 订单复制模板',
+        smsOrderCopyTemplatePlaceholder: '请输入复制模板，使用 {order_no} 作为订单号占位符',
+        smsOrderCopyTemplateHint: '在 SMS 订单管理页面复制订单号时使用，{order_no} 为订单号占位符',
         hideCcsImportButton: '隐藏 CCS 导入按钮',
         hideCcsImportButtonHint: '启用后将在 API Keys 页面隐藏"导入 CCS"按钮'
       },
