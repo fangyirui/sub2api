@@ -4623,6 +4623,9 @@ export default {
           '自定义首页内容，支持 Markdown/HTML。如果输入的是链接（以 http:// 或 https:// 开头），则会使用该链接作为 iframe 的 src 属性，这允许你设置任意网页作为首页。设置后首页的状态信息将不再显示。',
         homeContentIframeWarning:
           '⚠️ iframe 模式提示：部分网站设置了 X-Frame-Options 或 CSP 安全策略，禁止被嵌入到 iframe 中。如果页面显示空白或报错，请确认目标网站允许被嵌入，或考虑使用 HTML 模式自行构建页面内容。',
+        smsQueryNotice: 'SMS 查询页公告',
+        smsQueryNoticePlaceholder: '在此输入 SMS 查询页面的公告文本，留空则不显示',
+        smsQueryNoticeHint: '显示在 /sms-query 页面标题下方，用于告知客户使用须知和流程说明',
         hideCcsImportButton: '隐藏 CCS 导入按钮',
         hideCcsImportButtonHint: '启用后将在 API Keys 页面隐藏"导入 CCS"按钮'
       },
@@ -5705,6 +5708,9 @@ export default {
     noContent: '暂无短信内容',
     waitingPhone: '正在分配手机号...',
     waitingCode: '已分配手机号，等待短信验证码',
+    confirmActivate: '该订单尚未获取手机号码，确认后将为您分配号码',
+    activateBtn: '确认获取号码',
+    activating: '正在获取...',
     notFound: '未找到该订单，请检查订单号是否正确',
     queryError: '查询失败，请稍后重试',
     fetchFailed: '获取手机号失败，请联系客服',

@@ -81,6 +81,7 @@ type SystemSettings struct {
 	ContactInfo                 string           `json:"contact_info"`
 	DocURL                      string           `json:"doc_url"`
 	HomeContent                 string           `json:"home_content"`
+	SmsQueryNotice              string           `json:"sms_query_notice"`
 	HideCcsImportButton         bool             `json:"hide_ccs_import_button"`
 	PurchaseSubscriptionEnabled bool             `json:"purchase_subscription_enabled"`
 	PurchaseSubscriptionURL     string           `json:"purchase_subscription_url"`
@@ -169,6 +170,7 @@ type PublicSettings struct {
 	ContactInfo                      string           `json:"contact_info"`
 	DocURL                           string           `json:"doc_url"`
 	HomeContent                      string           `json:"home_content"`
+	SmsQueryNotice                   string           `json:"sms_query_notice"`
 	HideCcsImportButton              bool             `json:"hide_ccs_import_button"`
 	PurchaseSubscriptionEnabled      bool             `json:"purchase_subscription_enabled"`
 	PurchaseSubscriptionURL          string           `json:"purchase_subscription_url"`

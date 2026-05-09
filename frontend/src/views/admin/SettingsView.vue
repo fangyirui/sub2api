@@ -1972,6 +1972,22 @@
               </p>
             </div>
 
+            <!-- SMS Query Notice -->
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ t('admin.settings.site.smsQueryNotice') }}
+              </label>
+              <textarea
+                v-model="form.sms_query_notice"
+                rows="8"
+                class="input font-mono text-sm"
+                :placeholder="t('admin.settings.site.smsQueryNoticePlaceholder')"
+              ></textarea>
+              <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                {{ t('admin.settings.site.smsQueryNoticeHint') }}
+              </p>
+            </div>
+
             <!-- Hide CCS Import Button -->
             <div
               class="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-dark-700"
@@ -2657,6 +2673,7 @@ const form = reactive<SettingsForm>({
   contact_info: '',
   doc_url: '',
   home_content: '',
+  sms_query_notice: '',
   backend_mode_enabled: false,
   hide_ccs_import_button: false,
   payment_enabled: false,  payment_min_amount: 1,  payment_max_amount: 10000,  payment_daily_limit: 50000,  payment_max_pending_orders: 3,  payment_order_timeout_minutes: 30,  payment_balance_disabled: false,  payment_enabled_types: [],  payment_help_image_url: '',  payment_help_text: '',  payment_product_name_prefix: '',  payment_product_name_suffix: '',  payment_load_balance_strategy: 'round-robin',  payment_cancel_rate_limit_enabled: false,  payment_cancel_rate_limit_max: 10,  payment_cancel_rate_limit_window: 1,  payment_cancel_rate_limit_unit: 'day',  payment_cancel_rate_limit_window_mode: 'rolling',
@@ -3073,6 +3090,7 @@ async function saveSettings() {
       contact_info: form.contact_info,
       doc_url: form.doc_url,
       home_content: form.home_content,
+      sms_query_notice: form.sms_query_notice,
       backend_mode_enabled: form.backend_mode_enabled,
       hide_ccs_import_button: form.hide_ccs_import_button,
       table_default_page_size: form.table_default_page_size,

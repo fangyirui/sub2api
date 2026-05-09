@@ -147,6 +147,7 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		ContactInfo:                          settings.ContactInfo,
 		DocURL:                               settings.DocURL,
 		HomeContent:                          settings.HomeContent,
+		SmsQueryNotice:                       settings.SmsQueryNotice,
 		HideCcsImportButton:                  settings.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:          settings.PurchaseSubscriptionEnabled,
 		PurchaseSubscriptionURL:              settings.PurchaseSubscriptionURL,
@@ -260,6 +261,7 @@ type UpdateSettingsRequest struct {
 	ContactInfo                 string                `json:"contact_info"`
 	DocURL                      string                `json:"doc_url"`
 	HomeContent                 string                `json:"home_content"`
+	SmsQueryNotice              string                `json:"sms_query_notice"`
 	HideCcsImportButton         bool                  `json:"hide_ccs_import_button"`
 	PurchaseSubscriptionEnabled *bool                 `json:"purchase_subscription_enabled"`
 	PurchaseSubscriptionURL     *string               `json:"purchase_subscription_url"`
@@ -818,6 +820,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		ContactInfo:                      req.ContactInfo,
 		DocURL:                           req.DocURL,
 		HomeContent:                      req.HomeContent,
+		SmsQueryNotice:                   req.SmsQueryNotice,
 		HideCcsImportButton:              req.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:      purchaseEnabled,
 		PurchaseSubscriptionURL:          purchaseURL,
@@ -999,6 +1002,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		ContactInfo:                          updatedSettings.ContactInfo,
 		DocURL:                               updatedSettings.DocURL,
 		HomeContent:                          updatedSettings.HomeContent,
+		SmsQueryNotice:                       updatedSettings.SmsQueryNotice,
 		HideCcsImportButton:                  updatedSettings.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:          updatedSettings.PurchaseSubscriptionEnabled,
 		PurchaseSubscriptionURL:              updatedSettings.PurchaseSubscriptionURL,

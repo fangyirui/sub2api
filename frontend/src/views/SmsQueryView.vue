@@ -66,6 +66,14 @@
           </p>
         </div>
 
+        <!-- Notice -->
+        <div
+          v-if="smsQueryNotice"
+          class="mb-8 overflow-hidden rounded-2xl border border-amber-200/60 bg-amber-50/80 p-5 shadow-sm backdrop-blur-sm dark:border-amber-900/40 dark:bg-amber-900/10"
+        >
+          <p class="whitespace-pre-wrap text-sm leading-relaxed text-amber-800 dark:text-amber-200">{{ smsQueryNotice }}</p>
+        </div>
+
         <!-- Search Box -->
         <div class="mb-8 overflow-hidden rounded-2xl border border-gray-200/60 bg-white/80 p-6 shadow-sm backdrop-blur-sm dark:border-dark-700/60 dark:bg-dark-800/80">
           <div class="flex gap-3">
@@ -111,8 +119,8 @@
             </div>
             <div class="flex items-center gap-3">
               <button
-                v-if="canRefresh(result.status)"
-                @click="doQuery"
+                v-if="result.status === 'pending'"
+                @click="doRefreshCode"
                 :disabled="loading"
                 class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 transition-colors hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/40"
               >
@@ -146,8 +154,24 @@
               <p class="font-mono text-sm text-gray-900 dark:text-white">{{ result.order_no }}</p>
             </div>
 
-            <!-- Phone -->
-            <div>
+            <!-- Activate Confirmation (status=created) -->
+            <div v-if="result.status === 'created'" class="rounded-xl border border-blue-200 bg-blue-50 p-5 text-center dark:border-blue-900/40 dark:bg-blue-900/10">
+              <p class="mb-4 text-sm text-blue-800 dark:text-blue-200">{{ t('smsQuery.confirmActivate') }}</p>
+              <button
+                @click="doActivate"
+                :disabled="loading"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:from-blue-600 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg v-if="loading" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                {{ loading ? t('smsQuery.activating') : t('smsQuery.activateBtn') }}
+              </button>
+            </div>
+
+            <!-- Phone (status=pending/received) -->
+            <div v-if="result.status !== 'created'">
               <label class="mb-1 block text-xs font-medium text-gray-400 dark:text-dark-500">{{ t('smsQuery.phoneNumber') }}</label>
               <p
                 v-if="result.phone_number"
@@ -158,8 +182,8 @@
               <p v-else class="text-sm text-gray-500 dark:text-dark-400">{{ t('smsQuery.waitingPhone') }}</p>
             </div>
 
-            <!-- SMS Content -->
-            <div>
+            <!-- SMS Content (status=pending/received) -->
+            <div v-if="result.status !== 'created'">
               <label class="mb-1 block text-xs font-medium text-gray-400 dark:text-dark-500">{{ t('smsQuery.smsContent') }}</label>
               <div class="rounded-xl bg-gray-50 p-4 dark:bg-dark-700/50">
                 <p
@@ -210,7 +234,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
-import { refreshOrder, type SmsOrderResponse } from '@/api/smsQuery'
+import { queryByOrderNo, refreshOrder, type SmsOrderResponse } from '@/api/smsQuery'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -218,6 +242,7 @@ const appStore = useAppStore()
 
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Sub2API')
 const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
+const smsQueryNotice = computed(() => appStore.cachedPublicSettings?.sms_query_notice || '')
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const isAdmin = computed(() => authStore.isAdmin)
 const dashboardPath = computed(() => isAdmin.value ? '/admin/dashboard' : '/dashboard')
@@ -259,11 +284,29 @@ async function doQuery() {
   queried.value = true
 
   try {
-    result.value = await refreshOrder(no)
+    result.value = await queryByOrderNo(no)
   } catch (err: any) {
     if (err?.status === 404 || err?.code === 'SMS_ORDER_NOT_FOUND') {
       result.value = null
-    } else if (err?.code === 'SMS_ORDER_FETCH_FAILED') {
+    } else {
+      error.value = err?.message || t('smsQuery.queryError')
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+async function doActivate() {
+  const no = orderNo.value.trim()
+  if (!no) return
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    result.value = await refreshOrder(no)
+  } catch (err: any) {
+    if (err?.code === 'SMS_ORDER_FETCH_FAILED') {
       error.value = t('smsQuery.fetchFailed')
     } else {
       error.value = err?.message || t('smsQuery.queryError')
@@ -273,8 +316,20 @@ async function doQuery() {
   }
 }
 
-function canRefresh(status: string): boolean {
-  return status === 'created' || status === 'pending'
+async function doRefreshCode() {
+  const no = orderNo.value.trim()
+  if (!no) return
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    result.value = await refreshOrder(no)
+  } catch (err: any) {
+    error.value = err?.message || t('smsQuery.queryError')
+  } finally {
+    loading.value = false
+  }
 }
 
 function statusClass(status: string): string {
@@ -302,5 +357,6 @@ function formatTime(iso: string): string {
 onMounted(() => {
   initTheme()
   authStore.checkAuth()
+  appStore.fetchPublicSettings()
 })
 </script>
