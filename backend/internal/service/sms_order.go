@@ -123,7 +123,7 @@ func (s *SmsOrderService) BatchCreate(ctx context.Context, count int, serviceTyp
 
 	var orders []*SmsOrder
 	for i := 0; i < count; i++ {
-		orderNo := generateOrderNo()
+		orderNo := generateOrderNo(serviceType)
 		order := &SmsOrder{
 			OrderNo:     orderNo,
 			ServiceType: serviceType,
@@ -281,6 +281,15 @@ func (s *SmsOrderService) pollPendingOrders(ctx context.Context, timeout time.Du
 	}
 }
 
-func generateOrderNo() string {
-	return fmt.Sprintf("SMS%d", time.Now().UnixNano())
+func generateOrderNo(serviceType string) string {
+	var prefix string
+	switch serviceType {
+	case "claude", "acz":
+		prefix = "CC"
+	case "openai", "dr":
+		prefix = "OP"
+	default:
+		prefix = "DE"
+	}
+	return fmt.Sprintf("%s%d", prefix, time.Now().UnixNano())
 }
