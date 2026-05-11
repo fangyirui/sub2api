@@ -7,6 +7,7 @@ import (
 	dbent "github.com/Wei-Shaw/sub2api/ent"
 	"github.com/Wei-Shaw/sub2api/ent/smsorder"
 	"github.com/Wei-Shaw/sub2api/internal/service"
+	"entgo.io/ent/dialect/sql"
 )
 
 type smsOrderRepository struct {
@@ -49,6 +50,12 @@ func (r *smsOrderRepository) List(ctx context.Context, filter service.SmsOrderLi
 	if filter.Status != "" {
 		q = q.Where(smsorder.StatusEQ(filter.Status))
 	}
+	if filter.StartTime != nil {
+		q = q.Where(smsorder.CreatedAtGTE(*filter.StartTime))
+	}
+	if filter.EndTime != nil {
+		q = q.Where(smsorder.CreatedAtLT(*filter.EndTime))
+	}
 
 	total, err := q.Clone().Count(ctx)
 	if err != nil {
@@ -64,8 +71,23 @@ func (r *smsOrderRepository) List(ctx context.Context, filter service.SmsOrderLi
 		pageSize = 20
 	}
 
+	var orderOpt smsorder.OrderOption
+	if filter.SortBy == "pending_at" {
+		if filter.SortDesc {
+			orderOpt = smsorder.ByPendingAt(sql.OrderDesc(), sql.OrderNullsLast())
+		} else {
+			orderOpt = smsorder.ByPendingAt(sql.OrderNullsLast())
+		}
+	} else {
+		if filter.SortDesc {
+			orderOpt = smsorder.ByCreatedAt(sql.OrderDesc())
+		} else {
+			orderOpt = smsorder.ByCreatedAt()
+		}
+	}
+
 	items, err := q.
-		Order(dbent.Desc(smsorder.FieldCreatedAt)).
+		Order(orderOpt).
 		Offset((page - 1) * pageSize).
 		Limit(pageSize).
 		All(ctx)

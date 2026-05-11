@@ -3485,8 +3485,15 @@ export default {
         phone: '手机号',
         status: '状态',
         smsContent: '验证码内容',
+        pendingAt: '获取号码时间',
         createdAt: '创建时间',
         actions: '操作'
+      },
+      sort: {
+        pendingAtDesc: '获取时间 新→旧',
+        pendingAtAsc: '获取时间 旧→新',
+        createdAtDesc: '创建时间 新→旧',
+        createdAtAsc: '创建时间 旧→新'
       }
     },
     promo: {

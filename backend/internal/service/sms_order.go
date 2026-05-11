@@ -56,9 +56,13 @@ type HeroSmsClient interface {
 }
 
 type SmsOrderListFilter struct {
-	Page     int
-	PageSize int
-	Status   string
+	Page      int
+	PageSize  int
+	Status    string
+	StartTime *time.Time
+	EndTime   *time.Time
+	SortBy    string
+	SortDesc  bool
 }
 
 type SmsOrderListResult struct {
@@ -109,6 +113,10 @@ func (s *SmsOrderService) List(ctx context.Context, filter SmsOrderListFilter) (
 	}
 	if filter.PageSize > 100 {
 		filter.PageSize = 100
+	}
+	if filter.SortBy == "" {
+		filter.SortBy = "created_at"
+		filter.SortDesc = true
 	}
 	return s.repo.List(ctx, filter)
 }

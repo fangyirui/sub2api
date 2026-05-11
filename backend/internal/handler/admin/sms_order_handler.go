@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/timezone"
 	"github.com/Wei-Shaw/sub2api/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -77,18 +78,44 @@ type adminSmsOrderListResponse struct {
 	Total int                     `json:"total"`
 }
 
-// List returns SMS orders with pagination and optional status filter.
-// GET /api/v1/admin/sms-orders?page=1&page_size=20&status=created
+// List returns SMS orders with pagination, date filtering, and sorting.
+// GET /api/v1/admin/sms-orders?page=1&page_size=20&status=created&start_date=2026-05-11&end_date=2026-05-11&timezone=Asia/Shanghai&sort_by=pending_at&sort_order=desc
 func (h *AdminSmsOrderHandler) List(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "20"))
 	status := c.Query("status")
+	userTZ := c.Query("timezone")
+	sortBy := c.DefaultQuery("sort_by", "pending_at")
+	sortOrder := c.DefaultQuery("sort_order", "desc")
 
-	res, err := h.smsOrderService.List(c.Request.Context(), service.SmsOrderListFilter{
+	filter := service.SmsOrderListFilter{
 		Page:     page,
 		PageSize: pageSize,
 		Status:   status,
-	})
+		SortBy:   sortBy,
+		SortDesc: sortOrder == "desc",
+	}
+
+	if startDateStr := c.Query("start_date"); startDateStr != "" {
+		t, err := timezone.ParseInUserLocation("2006-01-02", startDateStr, userTZ)
+		if err != nil {
+			response.BadRequest(c, "Invalid start_date format, use YYYY-MM-DD")
+			return
+		}
+		filter.StartTime = &t
+	}
+
+	if endDateStr := c.Query("end_date"); endDateStr != "" {
+		t, err := timezone.ParseInUserLocation("2006-01-02", endDateStr, userTZ)
+		if err != nil {
+			response.BadRequest(c, "Invalid end_date format, use YYYY-MM-DD")
+			return
+		}
+		t = t.AddDate(0, 0, 1)
+		filter.EndTime = &t
+	}
+
+	res, err := h.smsOrderService.List(c.Request.Context(), filter)
 	if err != nil {
 		response.ErrorFrom(c, err)
 		return

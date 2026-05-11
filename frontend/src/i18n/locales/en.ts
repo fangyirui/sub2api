@@ -3327,8 +3327,15 @@ export default {
         phone: 'Phone',
         status: 'Status',
         smsContent: 'SMS',
+        pendingAt: 'Number Assigned',
         createdAt: 'Created At',
         actions: 'Actions'
+      },
+      sort: {
+        pendingAtDesc: 'Assigned Time New→Old',
+        pendingAtAsc: 'Assigned Time Old→New',
+        createdAtDesc: 'Created Time New→Old',
+        createdAtAsc: 'Created Time Old→New'
       }
     },
 

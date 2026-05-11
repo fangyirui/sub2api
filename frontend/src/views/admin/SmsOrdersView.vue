@@ -5,11 +5,24 @@
         <div class="space-y-3">
           <!-- Top action row -->
           <div class="flex flex-wrap items-center gap-3">
+            <DateRangePicker
+              v-model:start-date="startDate"
+              v-model:end-date="endDate"
+              @change="handleDateChange"
+            />
+
             <Select
               v-model="filters.status"
               :options="filterStatusOptions"
               class="w-40"
               @change="handleStatusChange"
+            />
+
+            <Select
+              v-model="filters.sortBy"
+              :options="sortByOptions"
+              class="w-40"
+              @change="handleSortChange"
             />
 
             <div class="flex flex-1 flex-wrap items-center justify-end gap-2">
@@ -118,6 +131,13 @@
             </span>
           </template>
 
+          <template #cell-pending_at="{ value }">
+            <span v-if="value" class="text-sm text-gray-500 dark:text-dark-400">
+              {{ formatDateTime(value) }}
+            </span>
+            <span v-else class="text-sm text-gray-400 dark:text-dark-500">—</span>
+          </template>
+
           <template #cell-actions="{ row }">
             <button
               @click="handleCopy(row.order_no)"
@@ -195,6 +215,7 @@ import TablePageLayout from '@/components/layout/TablePageLayout.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import Select from '@/components/common/Select.vue'
+import DateRangePicker from '@/components/common/DateRangePicker.vue'
 import Icon from '@/components/icons/Icon.vue'
 import type { Column } from '@/components/common/types'
 import { useAppStore } from '@/stores'
@@ -221,7 +242,12 @@ const batchOrderNos = ref<string[]>([])
 const batchCopied = ref(false)
 const batchTextarea = ref<HTMLTextAreaElement | null>(null)
 
-const filters = reactive({ status: '' })
+const filters = reactive({ status: '', sortBy: 'pending_at_desc' })
+
+const today = new Date().toISOString().slice(0, 10)
+const startDate = ref(today)
+const endDate = ref(today)
+
 const pagination = reactive({
   page: 1,
   page_size: getPersistedPageSize(),
@@ -237,12 +263,20 @@ const filterStatusOptions = computed(() => [
   { value: 'failed', label: t('admin.smsOrders.status.failed') }
 ])
 
+const sortByOptions = computed(() => [
+  { value: 'pending_at_desc', label: t('admin.smsOrders.sort.pendingAtDesc') },
+  { value: 'pending_at_asc', label: t('admin.smsOrders.sort.pendingAtAsc') },
+  { value: 'created_at_desc', label: t('admin.smsOrders.sort.createdAtDesc') },
+  { value: 'created_at_asc', label: t('admin.smsOrders.sort.createdAtAsc') }
+])
+
 const columns = computed<Column[]>(() => [
   { key: 'order_no', label: t('admin.smsOrders.columns.orderNo') },
   { key: 'service_type', label: t('admin.smsOrders.columns.serviceType') },
   { key: 'phone_number', label: t('admin.smsOrders.columns.phone') },
   { key: 'status', label: t('admin.smsOrders.columns.status') },
   { key: 'sms_content', label: t('admin.smsOrders.columns.smsContent') },
+  { key: 'pending_at', label: t('admin.smsOrders.columns.pendingAt') },
   { key: 'created_at', label: t('admin.smsOrders.columns.createdAt') },
   { key: 'actions', label: t('admin.smsOrders.columns.actions') }
 ])
@@ -277,12 +311,23 @@ async function loadOrders() {
   abortController = ctrl
   loading.value = true
 
+  const [sortBy, sortOrder] = filters.sortBy.includes('_asc')
+    ? [filters.sortBy.replace('_asc', ''), 'asc']
+    : [filters.sortBy.replace('_desc', ''), 'desc']
+
   try {
     const res = await adminAPI.smsOrders.list(
       pagination.page,
       pagination.page_size,
       filters.status || undefined,
-      { signal: ctrl.signal }
+      {
+        signal: ctrl.signal,
+        start_date: startDate.value,
+        end_date: endDate.value,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        sort_by: sortBy,
+        sort_order: sortOrder
+      }
     )
     if (ctrl.signal.aborted || abortController !== ctrl) return
     orders.value = res.items
@@ -307,6 +352,16 @@ async function loadOrders() {
 }
 
 function handleStatusChange() {
+  pagination.page = 1
+  loadOrders()
+}
+
+function handleDateChange() {
+  pagination.page = 1
+  loadOrders()
+}
+
+function handleSortChange() {
   pagination.page = 1
   loadOrders()
 }
