@@ -1,0 +1,1 @@
+ALTER TABLE sms_orders ADD COLUMN IF NOT EXISTS service_type VARCHAR(20) NOT NULL DEFAULT 'claude';

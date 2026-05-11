@@ -7,6 +7,7 @@ import { apiClient } from './client'
 
 export interface SmsOrderResponse {
   order_no: string
+  service_type: string
   phone_number: string
   sms_content: string
   status: string

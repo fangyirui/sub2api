@@ -45,11 +45,22 @@ func NewHeroSmsClient(cfg *config.Config) service.HeroSmsClient {
 	}
 }
 
-func (c *heroSmsClient) GetNumber(ctx context.Context) (*service.HeroSmsNumber, error) {
+func (c *heroSmsClient) resolveParams(serviceType string) (svc, country, maxPrice string) {
+	switch serviceType {
+	case "openai":
+		return "dr", "76", "0.2"
+	default:
+		return c.service, c.country, "0.063"
+	}
+}
+
+func (c *heroSmsClient) GetNumber(ctx context.Context, serviceType string) (*service.HeroSmsNumber, error) {
+	svc, country, maxPrice := c.resolveParams(serviceType)
 	params := url.Values{}
 	params.Set("action", "getNumber")
-	params.Set("service", c.service)
-	params.Set("country", c.country)
+	params.Set("service", svc)
+	params.Set("country", country)
+	params.Set("maxPrice", maxPrice)
 	params.Set("api_key", c.apiKey)
 
 	reqURL := c.baseURL + "?" + params.Encode()
@@ -86,7 +97,7 @@ func (c *heroSmsClient) GetNumber(ctx context.Context) (*service.HeroSmsNumber, 
 // All hero-sms errors (network and business such as NO_NUMBERS / BAD_KEY) are
 // treated uniformly because hero-sms occasionally returns business errors
 // while it warms up.
-func (c *heroSmsClient) GetNumberWithRetry(ctx context.Context) (*service.HeroSmsNumber, error) {
+func (c *heroSmsClient) GetNumberWithRetry(ctx context.Context, serviceType string) (*service.HeroSmsNumber, error) {
 	var lastErr error
 	for attempt := 0; attempt <= len(heroSmsRetryBackoffs); attempt++ {
 		if attempt > 0 {
@@ -98,7 +109,7 @@ func (c *heroSmsClient) GetNumberWithRetry(ctx context.Context) (*service.HeroSm
 			}
 		}
 
-		num, err := c.GetNumber(ctx)
+		num, err := c.GetNumber(ctx, serviceType)
 		if err == nil {
 			return num, nil
 		}

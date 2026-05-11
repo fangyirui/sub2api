@@ -30,6 +30,7 @@ func (r *smsOrderRepository) GetByOrderNo(ctx context.Context, orderNo string) (
 func (r *smsOrderRepository) Create(ctx context.Context, order *service.SmsOrder) (*service.SmsOrder, error) {
 	builder := r.client.SmsOrder.Create().
 		SetOrderNo(order.OrderNo).
+		SetServiceType(order.ServiceType).
 		SetPhoneNumber(order.PhoneNumber).
 		SetHeroSmsID(order.HeroSmsID).
 		SetStatus(order.Status)
@@ -125,6 +126,7 @@ func smsOrderEntityToService(m *dbent.SmsOrder) *service.SmsOrder {
 	return &service.SmsOrder{
 		ID:          m.ID,
 		OrderNo:     m.OrderNo,
+		ServiceType: m.ServiceType,
 		PhoneNumber: m.PhoneNumber,
 		HeroSmsID:   m.HeroSmsID,
 		SmsContent:  m.SmsContent,

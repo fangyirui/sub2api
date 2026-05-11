@@ -140,7 +140,13 @@
                 </svg>
                 {{ t('smsQuery.refreshBtn') }}
               </button>
-              <span class="text-xs text-gray-400 dark:text-dark-500">
+              <span v-if="result.status === 'pending' && remainingSeconds > 0" class="text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                {{ t('smsQuery.remaining', { time: countdownText }) }}
+              </span>
+              <span v-else-if="result.status === 'pending' && remainingSeconds <= 0" class="text-xs text-red-500 dark:text-red-400">
+                {{ t('smsQuery.expired') }}
+              </span>
+              <span v-else-if="result.status !== 'created'" class="text-xs text-gray-400 dark:text-dark-500">
                 {{ formatTime(result.created_at) }}
               </span>
             </div>
@@ -229,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
@@ -353,6 +359,49 @@ function formatTime(iso: string): string {
   if (!iso) return ''
   return new Date(iso).toLocaleString()
 }
+
+// Countdown timer for pending status (20 min timeout)
+const PENDING_TIMEOUT_MS = 20 * 60 * 1000
+const remainingSeconds = ref(0)
+let countdownTimer: ReturnType<typeof setInterval> | null = null
+
+function startCountdown() {
+  stopCountdown()
+  if (!result.value || result.value.status !== 'pending' || !result.value.pending_at) return
+
+  const pendingAt = new Date(result.value.pending_at).getTime()
+  const expiresAt = pendingAt + PENDING_TIMEOUT_MS
+
+  const update = () => {
+    const left = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
+    remainingSeconds.value = left
+    if (left <= 0) stopCountdown()
+  }
+
+  update()
+  countdownTimer = setInterval(update, 1000)
+}
+
+function stopCountdown() {
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+    countdownTimer = null
+  }
+}
+
+const countdownText = computed(() => {
+  const m = Math.floor(remainingSeconds.value / 60)
+  const s = remainingSeconds.value % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
+})
+
+watch(result, () => {
+  startCountdown()
+})
+
+onUnmounted(() => {
+  stopCountdown()
+})
 
 onMounted(() => {
   initTheme()

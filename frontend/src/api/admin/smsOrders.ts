@@ -6,6 +6,7 @@ import { apiClient } from '../client'
 
 export interface SmsOrder {
   order_no: string
+  service_type: string
   phone_number: string
   sms_content: string
   status: string
@@ -39,9 +40,10 @@ export async function list(
   return data
 }
 
-export async function batchGenerate(count: number): Promise<BatchGenerateResponse> {
+export async function batchGenerate(count: number, serviceType: string = 'claude'): Promise<BatchGenerateResponse> {
   const { data } = await apiClient.post<BatchGenerateResponse>('/admin/sms-orders/generate', {
-    count
+    count,
+    service_type: serviceType
   })
   return data
 }

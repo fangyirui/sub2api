@@ -87,12 +87,12 @@ type Config struct {
 }
 
 type HeroSmsConfig struct {
-	APIKey             string `mapstructure:"api_key"`
-	BaseURL            string `mapstructure:"base_url"`
-	Service            string `mapstructure:"service"`
-	Country            string `mapstructure:"country"`
-	PollIntervalSeconds int   `mapstructure:"poll_interval_seconds"`
-	PollTimeoutMinutes  int   `mapstructure:"poll_timeout_minutes"`
+	APIKey              string `mapstructure:"api_key"`
+	BaseURL             string `mapstructure:"base_url"`
+	Service             string `mapstructure:"service"`
+	Country             string `mapstructure:"country"`
+	PollIntervalSeconds int    `mapstructure:"poll_interval_seconds"`
+	PollTimeoutMinutes  int    `mapstructure:"poll_timeout_minutes"`
 }
 
 type LogConfig struct {

@@ -1,0 +1,21 @@
+  本地（Mac）
+
+  # 1. 构建镜像
+  cd ~/PycharmProjects/sub2api/deploy
+  docker compose -f docker-compose.local.yml build sub2api
+
+  # 2. 打 tag 并推送
+  docker tag sub2api-local:latest fangyirui/sub2api:latest
+  docker push fangyirui/sub2api:latest
+
+  云服务器
+
+  # 3. 拉取新镜像并重启
+  cd ~/sub2api/deploy
+  docker pull fangyirui/sub2api:latest
+  docker compose up -d
+
+
+本地重启调试
+docker compose -f docker-compose.local.yml restart sub2api
+docker compose -f docker-compose.local.yml up -d --build sub2api

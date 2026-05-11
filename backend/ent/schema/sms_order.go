@@ -33,6 +33,9 @@ func (SmsOrder) Fields() []ent.Field {
 			MaxLen(100).
 			NotEmpty().
 			Unique(),
+		field.String("service_type").
+			MaxLen(20).
+			Default("claude"),
 		field.String("phone_number").
 			MaxLen(50).
 			Optional().

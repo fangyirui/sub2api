@@ -18,11 +18,13 @@ func NewAdminSmsOrderHandler(smsOrderService *service.SmsOrderService) *AdminSms
 }
 
 type batchGenerateRequest struct {
-	Count int `json:"count" binding:"required,min=1,max=50"`
+	Count       int    `json:"count" binding:"required,min=1,max=50"`
+	ServiceType string `json:"service_type"`
 }
 
 type adminSmsOrderResponse struct {
 	OrderNo     string  `json:"order_no"`
+	ServiceType string  `json:"service_type"`
 	PhoneNumber string  `json:"phone_number"`
 	SmsContent  string  `json:"sms_content"`
 	Status      string  `json:"status"`
@@ -33,6 +35,7 @@ type adminSmsOrderResponse struct {
 func toAdminSmsOrderResponse(o *service.SmsOrder) adminSmsOrderResponse {
 	resp := adminSmsOrderResponse{
 		OrderNo:     o.OrderNo,
+		ServiceType: o.ServiceType,
 		PhoneNumber: o.PhoneNumber,
 		SmsContent:  o.SmsContent,
 		Status:      o.Status,
@@ -55,7 +58,7 @@ func (h *AdminSmsOrderHandler) BatchGenerate(c *gin.Context) {
 		return
 	}
 
-	orders, err := h.smsOrderService.BatchCreate(c.Request.Context(), req.Count)
+	orders, err := h.smsOrderService.BatchCreate(c.Request.Context(), req.Count, req.ServiceType)
 	if err != nil {
 		response.ErrorFrom(c, err)
 		return

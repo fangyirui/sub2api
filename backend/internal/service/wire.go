@@ -465,7 +465,7 @@ var ProviderSet = wire.NewSet(
 	ProvidePaymentConfigService,
 	NewPaymentService,
 	ProvidePaymentOrderExpiryService,
-	NewSmsOrderService,
+	ProvideSmsOrderService,
 )
 
 // ProvidePaymentConfigService wraps NewPaymentConfigService to accept the named
@@ -478,5 +478,12 @@ func ProvidePaymentConfigService(entClient *dbent.Client, settingRepo SettingRep
 func ProvidePaymentOrderExpiryService(paymentSvc *PaymentService) *PaymentOrderExpiryService {
 	svc := NewPaymentOrderExpiryService(paymentSvc, 60*time.Second)
 	svc.Start()
+	return svc
+}
+
+// ProvideSmsOrderService creates and starts SmsOrderService with background polling.
+func ProvideSmsOrderService(repo SmsOrderRepository, heroClient HeroSmsClient, cfg *config.Config) *SmsOrderService {
+	svc := NewSmsOrderService(repo, heroClient, cfg)
+	svc.StartPolling(context.Background())
 	return svc
 }

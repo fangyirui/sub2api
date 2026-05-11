@@ -9,6 +9,7 @@ import (
 // SmsOrderResponse is the JSON response for an SMS order query.
 type SmsOrderResponse struct {
 	OrderNo     string     `json:"order_no"`
+	ServiceType string     `json:"service_type"`
 	PhoneNumber string     `json:"phone_number"`
 	SmsContent  string     `json:"sms_content"`
 	Status      string     `json:"status"`
@@ -24,6 +25,7 @@ func SmsOrderFromService(o *service.SmsOrder) *SmsOrderResponse {
 	}
 	return &SmsOrderResponse{
 		OrderNo:     o.OrderNo,
+		ServiceType: o.ServiceType,
 		PhoneNumber: o.PhoneNumber,
 		SmsContent:  o.SmsContent,
 		Status:      o.Status,

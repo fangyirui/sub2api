@@ -28,6 +28,7 @@ const (
 type SmsOrder struct {
 	ID          int64
 	OrderNo     string
+	ServiceType string
 	PhoneNumber string
 	HeroSmsID   string
 	SmsContent  string
@@ -49,8 +50,8 @@ type HeroSmsStatus struct {
 }
 
 type HeroSmsClient interface {
-	GetNumber(ctx context.Context) (*HeroSmsNumber, error)
-	GetNumberWithRetry(ctx context.Context) (*HeroSmsNumber, error)
+	GetNumber(ctx context.Context, serviceType string) (*HeroSmsNumber, error)
+	GetNumberWithRetry(ctx context.Context, serviceType string) (*HeroSmsNumber, error)
 	GetStatus(ctx context.Context, id string) (*HeroSmsStatus, error)
 }
 
@@ -112,17 +113,21 @@ func (s *SmsOrderService) List(ctx context.Context, filter SmsOrderListFilter) (
 	return s.repo.List(ctx, filter)
 }
 
-func (s *SmsOrderService) BatchCreate(ctx context.Context, count int) ([]*SmsOrder, error) {
+func (s *SmsOrderService) BatchCreate(ctx context.Context, count int, serviceType string) ([]*SmsOrder, error) {
 	if count <= 0 || count > 50 {
 		return nil, fmt.Errorf("count must be between 1 and 50")
+	}
+	if serviceType == "" {
+		serviceType = "claude"
 	}
 
 	var orders []*SmsOrder
 	for i := 0; i < count; i++ {
 		orderNo := generateOrderNo()
 		order := &SmsOrder{
-			OrderNo: orderNo,
-			Status:  SmsOrderStatusCreated,
+			OrderNo:     orderNo,
+			ServiceType: serviceType,
+			Status:      SmsOrderStatusCreated,
 		}
 
 		created, err := s.repo.Create(ctx, order)
@@ -156,7 +161,7 @@ func (s *SmsOrderService) RefreshSmsContent(ctx context.Context, orderNo string)
 }
 
 func (s *SmsOrderService) assignNumber(ctx context.Context, order *SmsOrder) (*SmsOrder, error) {
-	num, err := s.heroClient.GetNumberWithRetry(ctx)
+	num, err := s.heroClient.GetNumberWithRetry(ctx, order.ServiceType)
 	if err != nil {
 		if updErr := s.repo.UpdateStatus(ctx, order.ID, SmsOrderStatusFailed); updErr != nil {
 			slog.Error("mark sms order failed", "order_no", order.OrderNo, "error", updErr)
@@ -217,10 +222,7 @@ func (s *SmsOrderService) StartPolling(ctx context.Context) {
 	if interval <= 0 {
 		interval = 5 * time.Second
 	}
-	timeout := time.Duration(s.cfg.HeroSms.PollTimeoutMinutes) * time.Minute
-	if timeout <= 0 {
-		timeout = 10 * time.Minute
-	}
+	timeout := s.pendingTimeout()
 
 	go func() {
 		ticker := time.NewTicker(interval)
