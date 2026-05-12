@@ -481,9 +481,7 @@ func ProvidePaymentOrderExpiryService(paymentSvc *PaymentService) *PaymentOrderE
 	return svc
 }
 
-// ProvideSmsOrderService creates and starts SmsOrderService with background polling.
+// ProvideSmsOrderService creates SmsOrderService (polling disabled).
 func ProvideSmsOrderService(repo SmsOrderRepository, heroClient HeroSmsClient, cfg *config.Config) *SmsOrderService {
-	svc := NewSmsOrderService(repo, heroClient, cfg)
-	svc.StartPolling(context.Background())
-	return svc
+	return NewSmsOrderService(repo, heroClient, cfg)
 }

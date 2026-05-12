@@ -6,6 +6,8 @@
 
   # 2. 打 tag 并推送
   docker tag sub2api-local:latest fangyirui/sub2api:latest
+  # 美国01节点推送
+  docker login -u fangyirui -p fangyirui。。。
   docker push fangyirui/sub2api:latest
 
   云服务器
@@ -19,3 +21,6 @@
 本地重启调试
 docker compose -f docker-compose.local.yml restart sub2api
 docker compose -f docker-compose.local.yml up -d --build sub2api
+
+
+  docker exec sub2api-postgres psql -U sub2api -d sub2api -c "SELECT pid, now() - pg_stat_activity.query_start AS duration, query FROM pg_stat_activity WHERE state != 'idle' ORDER BY duration DESC LIMIT 5;"
