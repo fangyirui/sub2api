@@ -144,7 +144,7 @@ const routes: RouteRecordRaw[] = [
   // ==================== User Routes ====================
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/key-usage'
   },
   {
     path: '/dashboard',
