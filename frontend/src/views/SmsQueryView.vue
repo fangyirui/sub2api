@@ -14,7 +14,7 @@
       <nav class="mx-auto flex max-w-6xl items-center justify-between">
         <router-link to="/home" class="flex items-center gap-3">
           <div class="h-10 w-10 overflow-hidden rounded-xl shadow-md">
-            <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
+            <img v-if="siteLogo" :src="siteLogo" alt="Logo" class="h-full w-full object-contain" />
           </div>
           <span class="text-lg font-bold text-gray-900 dark:text-white">{{ siteName }}</span>
         </router-link>
@@ -246,7 +246,7 @@ const { t } = useI18n()
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
-const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Sub2API')
+const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || '')
 const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
 const smsQueryNotice = computed(() => appStore.cachedPublicSettings?.sms_query_notice || '')
 const isAuthenticated = computed(() => authStore.isAuthenticated)

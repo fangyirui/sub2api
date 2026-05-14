@@ -27,7 +27,7 @@ export const useAppStore = defineStore('app', () => {
   // Public settings cache state
   const publicSettingsLoaded = ref<boolean>(_injected !== null)
   const publicSettingsLoading = ref<boolean>(false)
-  const siteName = ref<string>(_injected?.site_name || 'Sub2API')
+  const siteName = ref<string>(_injected?.site_name || '')
   const siteLogo = ref<string>(_injected?.site_logo || '')
   const siteVersion = ref<string>(_injected?.version || '')
   const contactInfo = ref<string>(_injected?.contact_info || '')
@@ -291,7 +291,7 @@ export const useAppStore = defineStore('app', () => {
       window.__APP_CONFIG__ = { ...config }
     }
     cachedPublicSettings.value = config
-    siteName.value = config.site_name || 'Sub2API'
+    siteName.value = config.site_name || ''
     siteLogo.value = config.site_logo || ''
     siteVersion.value = config.version || ''
     contactInfo.value = config.contact_info || ''
