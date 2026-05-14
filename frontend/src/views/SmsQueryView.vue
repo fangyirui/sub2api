@@ -406,6 +406,8 @@ onUnmounted(() => {
 onMounted(() => {
   initTheme()
   authStore.checkAuth()
-  appStore.fetchPublicSettings()
+  if (!appStore.publicSettingsLoaded) {
+    appStore.fetchPublicSettings()
+  }
 })
 </script>

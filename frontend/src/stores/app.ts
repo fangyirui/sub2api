@@ -21,16 +21,19 @@ export const useAppStore = defineStore('app', () => {
   const loading = ref<boolean>(false)
   const toasts = ref<Toast[]>([])
 
+  // Read injected config immediately so store refs start with correct values (no flash)
+  const _injected = (typeof window !== 'undefined' && window.__APP_CONFIG__) || null
+
   // Public settings cache state
-  const publicSettingsLoaded = ref<boolean>(false)
+  const publicSettingsLoaded = ref<boolean>(_injected !== null)
   const publicSettingsLoading = ref<boolean>(false)
-  const siteName = ref<string>('Sub2API')
-  const siteLogo = ref<string>('')
-  const siteVersion = ref<string>('')
-  const contactInfo = ref<string>('')
-  const apiBaseUrl = ref<string>('')
-  const docUrl = ref<string>('')
-  const cachedPublicSettings = ref<PublicSettings | null>(null)
+  const siteName = ref<string>(_injected?.site_name || 'Sub2API')
+  const siteLogo = ref<string>(_injected?.site_logo || '')
+  const siteVersion = ref<string>(_injected?.version || '')
+  const contactInfo = ref<string>(_injected?.contact_info || '')
+  const apiBaseUrl = ref<string>(_injected?.api_base_url || '')
+  const docUrl = ref<string>(_injected?.doc_url || '')
+  const cachedPublicSettings = ref<PublicSettings | null>(_injected)
 
   // Version cache state
   const versionLoaded = ref<boolean>(false)

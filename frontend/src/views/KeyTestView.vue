@@ -135,7 +135,7 @@ import { useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
 
-const DEFAULT_URL = 'https://www.aigogo.com'
+const DEFAULT_URL = 'http://www.buglaoge.cc'
 const DEFAULT_MODEL = 'claude-sonnet-4-6'
 
 const { t } = useI18n()
