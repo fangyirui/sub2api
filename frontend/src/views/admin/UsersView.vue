@@ -225,6 +225,10 @@
             </div>
 
             <!-- Create User Button (full width on mobile, auto width on desktop) -->
+            <button @click="showBatchCreateModal = true" class="btn btn-secondary flex-1 md:flex-initial">
+              <Icon name="plus" size="md" class="mr-2" />
+              {{ t('admin.users.batchCreate') }}
+            </button>
             <button @click="showCreateModal = true" class="btn btn-primary flex-1 md:flex-initial">
               <Icon name="plus" size="md" class="mr-2" />
               {{ t('admin.users.createUser') }}
@@ -596,6 +600,7 @@
 
     <ConfirmDialog :show="showDeleteDialog" :title="t('admin.users.deleteUser')" :message="t('admin.users.deleteConfirm', { email: deletingUser?.email })" :danger="true" @confirm="confirmDelete" @cancel="showDeleteDialog = false" />
     <UserCreateModal :show="showCreateModal" @close="showCreateModal = false" @success="loadUsers" />
+    <UserBatchCreateModal :show="showBatchCreateModal" @close="showBatchCreateModal = false" @success="loadUsers" />
     <UserEditModal :show="showEditModal" :user="editingUser" @close="closeEditModal" @success="loadUsers" />
     <UserApiKeysModal :show="showApiKeysModal" :user="viewingUser" @close="closeApiKeysModal" />
     <UserAllowedGroupsModal :show="showAllowedGroupsModal" :user="allowedGroupsUser" @close="closeAllowedGroupsModal" @success="loadUsers" />
@@ -630,6 +635,7 @@ import Select from '@/components/common/Select.vue'
 import UserAttributesConfigModal from '@/components/user/UserAttributesConfigModal.vue'
 import UserConcurrencyCell from '@/components/user/UserConcurrencyCell.vue'
 import UserCreateModal from '@/components/admin/user/UserCreateModal.vue'
+import UserBatchCreateModal from '@/components/admin/user/UserBatchCreateModal.vue'
 import UserEditModal from '@/components/admin/user/UserEditModal.vue'
 import UserApiKeysModal from '@/components/admin/user/UserApiKeysModal.vue'
 import UserAllowedGroupsModal from '@/components/admin/user/UserAllowedGroupsModal.vue'
@@ -938,6 +944,7 @@ const pagination = reactive({
 })
 
 const showCreateModal = ref(false)
+const showBatchCreateModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteDialog = ref(false)
 const showApiKeysModal = ref(false)

@@ -110,6 +110,21 @@ export default {
     }
   },
 
+  // Key Test Page
+  keyTest: {
+    title: 'API Key Test',
+    subtitle: 'Test whether your API Key is working',
+    baseUrl: 'Base URL',
+    apiKey: 'API Key',
+    apiKeyPlaceholder: 'Enter your API Key',
+    model: 'Model',
+    testBtn: 'Run Test',
+    testing: 'Testing...',
+    success: 'Request Succeeded',
+    failed: 'Request Failed',
+    noKey: 'Please enter an API Key',
+  },
+
   // Key Usage Query Page
   keyUsage: {
     title: 'API Key Usage',
@@ -289,6 +304,7 @@ export default {
     available: 'Available',
     copiedToClipboard: 'Copied to clipboard',
     copied: 'Copied',
+    copy: 'Copy',
     copyFailed: 'Failed to copy',
     verifying: 'Verifying...',
     processing: 'Processing...',
@@ -1340,6 +1356,10 @@ export default {
       title: 'User Management',
       description: 'Manage users and their permissions',
       createUser: 'Create User',
+      batchCreate: 'Batch Create',
+      batchCreateResult: 'Batch Create Result',
+      batchCount: 'Count',
+      batchCreateSuccess: 'Successfully created {count} users',
       editUser: 'Edit User',
       deleteUser: 'Delete User',
       searchUsers: 'Search by email, username, notes, or API key...',
@@ -5529,7 +5549,7 @@ export default {
 
   // SMS Order Query
   smsQuery: {
-    title: 'SMS Order Query',
+    title: 'Order Query',
     subtitle: 'Enter your order number to query virtual phone number and SMS content',
     inputPlaceholder: 'Enter order number',
     queryBtn: 'Query',

@@ -2,8 +2,12 @@ package admin
 
 import (
 	"context"
+	"crypto/md5"
+	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Wei-Shaw/sub2api/internal/handler/dto"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
@@ -399,4 +403,78 @@ func (h *UserHandler) ReplaceGroup(c *gin.Context) {
 	response.Success(c, gin.H{
 		"migrated_keys": result.MigratedKeys,
 	})
+}
+
+// UserBatchCreateRequest represents batch user creation request
+type UserBatchCreateRequest struct {
+	Count       int     `json:"count" binding:"required,min=1,max=100"`
+	Balance     float64 `json:"balance"`
+	Concurrency int     `json:"concurrency"`
+}
+
+// BatchCreate handles batch user creation with auto-generated emails
+// POST /api/v1/admin/users/batch
+func (h *UserHandler) BatchCreate(c *gin.Context) {
+	var req UserBatchCreateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "Invalid request: "+err.Error())
+		return
+	}
+
+	if req.Balance == 0 {
+		req.Balance = 10
+	}
+	if req.Concurrency == 0 {
+		req.Concurrency = 5
+	}
+
+	type createdUser struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	ctx := c.Request.Context()
+	users := make([]createdUser, 0, req.Count)
+
+	for i := 0; i < req.Count; i++ {
+		email := generateUniqueEmail()
+		password := fmt.Sprintf("%x", md5.Sum([]byte(email)))
+
+		_, err := h.adminService.CreateUser(ctx, &service.CreateUserInput{
+			Email:       email,
+			Password:    password,
+			Balance:     req.Balance,
+			Concurrency: req.Concurrency,
+		})
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate") || strings.Contains(err.Error(), "already exists") {
+				// Retry with a new email
+				email = generateUniqueEmail()
+				password = fmt.Sprintf("%x", md5.Sum([]byte(email)))
+				_, err = h.adminService.CreateUser(ctx, &service.CreateUserInput{
+					Email:       email,
+					Password:    password,
+					Balance:     req.Balance,
+					Concurrency: req.Concurrency,
+				})
+				if err != nil {
+					response.BadRequest(c, fmt.Sprintf("Failed to create user #%d: %s", i+1, err.Error()))
+					return
+				}
+			} else {
+				response.BadRequest(c, fmt.Sprintf("Failed to create user #%d: %s", i+1, err.Error()))
+				return
+			}
+		}
+
+		users = append(users, createdUser{Email: email, Password: password})
+	}
+
+	response.Success(c, gin.H{"users": users})
+}
+
+func generateUniqueEmail() string {
+	ts := time.Now().UnixMicro()
+	r := rand.Intn(9000) + 1000
+	return fmt.Sprintf("u%d%d@gen.local", ts, r)
 }

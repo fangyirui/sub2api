@@ -19,6 +19,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldOrderNo holds the string denoting the order_no field in the database.
 	FieldOrderNo = "order_no"
+	// FieldServiceType holds the string denoting the service_type field in the database.
+	FieldServiceType = "service_type"
 	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
 	FieldPhoneNumber = "phone_number"
 	// FieldHeroSmsID holds the string denoting the hero_sms_id field in the database.
@@ -39,6 +41,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldOrderNo,
+	FieldServiceType,
 	FieldPhoneNumber,
 	FieldHeroSmsID,
 	FieldSmsContent,
@@ -65,6 +68,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// OrderNoValidator is a validator for the "order_no" field. It is called by the builders before save.
 	OrderNoValidator func(string) error
+	// DefaultServiceType holds the default value on creation for the "service_type" field.
+	DefaultServiceType string
+	// ServiceTypeValidator is a validator for the "service_type" field. It is called by the builders before save.
+	ServiceTypeValidator func(string) error
 	// DefaultPhoneNumber holds the default value on creation for the "phone_number" field.
 	DefaultPhoneNumber string
 	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
@@ -102,6 +109,11 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByOrderNo orders the results by the order_no field.
 func ByOrderNo(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrderNo, opts...).ToFunc()
+}
+
+// ByServiceType orders the results by the service_type field.
+func ByServiceType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldServiceType, opts...).ToFunc()
 }
 
 // ByPhoneNumber orders the results by the phone_number field.

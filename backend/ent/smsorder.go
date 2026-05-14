@@ -23,6 +23,8 @@ type SmsOrder struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// OrderNo holds the value of the "order_no" field.
 	OrderNo string `json:"order_no,omitempty"`
+	// ServiceType holds the value of the "service_type" field.
+	ServiceType string `json:"service_type,omitempty"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber string `json:"phone_number,omitempty"`
 	// HeroSmsID holds the value of the "hero_sms_id" field.
@@ -43,7 +45,7 @@ func (*SmsOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case smsorder.FieldID:
 			values[i] = new(sql.NullInt64)
-		case smsorder.FieldOrderNo, smsorder.FieldPhoneNumber, smsorder.FieldHeroSmsID, smsorder.FieldSmsContent, smsorder.FieldStatus:
+		case smsorder.FieldOrderNo, smsorder.FieldServiceType, smsorder.FieldPhoneNumber, smsorder.FieldHeroSmsID, smsorder.FieldSmsContent, smsorder.FieldStatus:
 			values[i] = new(sql.NullString)
 		case smsorder.FieldCreatedAt, smsorder.FieldUpdatedAt, smsorder.FieldPendingAt:
 			values[i] = new(sql.NullTime)
@@ -85,6 +87,12 @@ func (_m *SmsOrder) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field order_no", values[i])
 			} else if value.Valid {
 				_m.OrderNo = value.String
+			}
+		case smsorder.FieldServiceType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field service_type", values[i])
+			} else if value.Valid {
+				_m.ServiceType = value.String
 			}
 		case smsorder.FieldPhoneNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -161,6 +169,9 @@ func (_m *SmsOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_no=")
 	builder.WriteString(_m.OrderNo)
+	builder.WriteString(", ")
+	builder.WriteString("service_type=")
+	builder.WriteString(_m.ServiceType)
 	builder.WriteString(", ")
 	builder.WriteString("phone_number=")
 	builder.WriteString(_m.PhoneNumber)

@@ -85,6 +85,15 @@ export async function create(userData: {
   return data
 }
 
+export interface BatchCreateResult {
+  users: { email: string; password: string }[]
+}
+
+export async function batchCreate(count: number, balance: number, concurrency: number): Promise<BatchCreateResult> {
+  const { data } = await apiClient.post<BatchCreateResult>('/admin/users/batch', { count, balance, concurrency })
+  return data
+}
+
 /**
  * Update user
  * @param id - User ID
@@ -252,6 +261,7 @@ export const usersAPI = {
   list,
   getById,
   create,
+  batchCreate,
   update,
   delete: deleteUser,
   updateBalance,

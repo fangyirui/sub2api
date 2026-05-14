@@ -110,6 +110,21 @@ export default {
     }
   },
 
+  // Key Test Page
+  keyTest: {
+    title: 'API Key 测试',
+    subtitle: '测试您的 API Key 是否可用',
+    baseUrl: 'Base URL',
+    apiKey: 'API Key',
+    apiKeyPlaceholder: '输入您的 API Key',
+    model: '模型',
+    testBtn: '开始测试',
+    testing: '测试中...',
+    success: '请求成功',
+    failed: '请求失败',
+    noKey: '请输入 API Key',
+  },
+
   // Key Usage Query Page
   keyUsage: {
     title: 'API Key 用量查询',
@@ -289,6 +304,7 @@ export default {
     available: '可用',
     copiedToClipboard: '已复制到剪贴板',
     copied: '已复制',
+    copy: '复制',
     copyFailed: '复制失败',
     verifying: '验证中...',
     processing: '处理中...',
@@ -1361,6 +1377,10 @@ export default {
       title: '用户管理',
       description: '管理用户账户和权限',
       createUser: '创建用户',
+      batchCreate: '批量生成',
+      batchCreateResult: '批量生成结果',
+      batchCount: '生成数量',
+      batchCreateSuccess: '成功生成 {count} 个用户',
       editUser: '编辑用户',
       deleteUser: '删除用户',
       deleteConfirmMessage: "确定要删除用户 '{email}' 吗？此操作无法撤销。",
@@ -5715,7 +5735,7 @@ export default {
 
   // SMS Order Query
   smsQuery: {
-    title: '短信订单查询',
+    title: '订单查询',
     subtitle: '输入订单号查询虚拟手机号和短信内容',
     inputPlaceholder: '请输入订单号',
     queryBtn: '查询',

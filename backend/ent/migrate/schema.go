@@ -829,6 +829,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "order_no", Type: field.TypeString, Unique: true, Size: 100},
+		{Name: "service_type", Type: field.TypeString, Size: 20, Default: "claude"},
 		{Name: "phone_number", Type: field.TypeString, Nullable: true, Size: 50, Default: ""},
 		{Name: "hero_sms_id", Type: field.TypeString, Nullable: true, Size: 100, Default: ""},
 		{Name: "sms_content", Type: field.TypeString, Nullable: true, Default: "", SchemaType: map[string]string{"postgres": "text"}},
@@ -844,7 +845,7 @@ var (
 			{
 				Name:    "smsorder_status",
 				Unique:  false,
-				Columns: []*schema.Column{SmsOrdersColumns[7]},
+				Columns: []*schema.Column{SmsOrdersColumns[8]},
 			},
 		},
 	}

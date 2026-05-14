@@ -15,6 +15,7 @@ docker push fangyirui/sub2api:latest
 # 3. 拉取新镜像并重启
 cd ~/sub2api/deploy
 docker pull fangyirui/sub2api:latest
+docker compose down
 docker compose up -d
 
 
@@ -24,3 +25,9 @@ docker compose -f docker-compose.local.yml up -d --build sub2api
 
 
 docker exec sub2api-postgres psql -U sub2api -d sub2api -c "SELECT pid, now() - pg_stat_activity.query_start AS duration, query FROM pg_stat_activity WHERE state != 'idle' ORDER BY duration DESC LIMIT 5;"
+
+
+
+服务器首次部署
+git clone https://github.com/fangyirui/sub2api.git
+cd ~/sub2api/deploy

@@ -140,6 +140,16 @@ const routes: RouteRecordRaw[] = [
       titleKey: 'smsQuery.title'
     }
   },
+  {
+    path: '/key-test',
+    name: 'KeyTest',
+    component: () => import('@/views/KeyTestView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Key Test',
+      titleKey: 'keyTest.title'
+    }
+  },
 
   // ==================== User Routes ====================
   {

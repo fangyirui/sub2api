@@ -69,6 +69,11 @@ func OrderNo(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldOrderNo, v))
 }
 
+// ServiceType applies equality check predicate on the "service_type" field. It's identical to ServiceTypeEQ.
+func ServiceType(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldServiceType, v))
+}
+
 // PhoneNumber applies equality check predicate on the "phone_number" field. It's identical to PhoneNumberEQ.
 func PhoneNumber(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldPhoneNumber, v))
@@ -237,6 +242,71 @@ func OrderNoEqualFold(v string) predicate.SmsOrder {
 // OrderNoContainsFold applies the ContainsFold predicate on the "order_no" field.
 func OrderNoContainsFold(v string) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldContainsFold(FieldOrderNo, v))
+}
+
+// ServiceTypeEQ applies the EQ predicate on the "service_type" field.
+func ServiceTypeEQ(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldServiceType, v))
+}
+
+// ServiceTypeNEQ applies the NEQ predicate on the "service_type" field.
+func ServiceTypeNEQ(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNEQ(FieldServiceType, v))
+}
+
+// ServiceTypeIn applies the In predicate on the "service_type" field.
+func ServiceTypeIn(vs ...string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIn(FieldServiceType, vs...))
+}
+
+// ServiceTypeNotIn applies the NotIn predicate on the "service_type" field.
+func ServiceTypeNotIn(vs ...string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotIn(FieldServiceType, vs...))
+}
+
+// ServiceTypeGT applies the GT predicate on the "service_type" field.
+func ServiceTypeGT(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGT(FieldServiceType, v))
+}
+
+// ServiceTypeGTE applies the GTE predicate on the "service_type" field.
+func ServiceTypeGTE(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGTE(FieldServiceType, v))
+}
+
+// ServiceTypeLT applies the LT predicate on the "service_type" field.
+func ServiceTypeLT(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLT(FieldServiceType, v))
+}
+
+// ServiceTypeLTE applies the LTE predicate on the "service_type" field.
+func ServiceTypeLTE(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLTE(FieldServiceType, v))
+}
+
+// ServiceTypeContains applies the Contains predicate on the "service_type" field.
+func ServiceTypeContains(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldContains(FieldServiceType, v))
+}
+
+// ServiceTypeHasPrefix applies the HasPrefix predicate on the "service_type" field.
+func ServiceTypeHasPrefix(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldHasPrefix(FieldServiceType, v))
+}
+
+// ServiceTypeHasSuffix applies the HasSuffix predicate on the "service_type" field.
+func ServiceTypeHasSuffix(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldHasSuffix(FieldServiceType, v))
+}
+
+// ServiceTypeEqualFold applies the EqualFold predicate on the "service_type" field.
+func ServiceTypeEqualFold(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEqualFold(FieldServiceType, v))
+}
+
+// ServiceTypeContainsFold applies the ContainsFold predicate on the "service_type" field.
+func ServiceTypeContainsFold(v string) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldContainsFold(FieldServiceType, v))
 }
 
 // PhoneNumberEQ applies the EQ predicate on the "phone_number" field.

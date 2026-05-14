@@ -21166,6 +21166,7 @@ type SmsOrderMutation struct {
 	created_at    *time.Time
 	updated_at    *time.Time
 	order_no      *string
+	service_type  *string
 	phone_number  *string
 	hero_sms_id   *string
 	sms_content   *string
@@ -21381,6 +21382,42 @@ func (m *SmsOrderMutation) OldOrderNo(ctx context.Context) (v string, err error)
 // ResetOrderNo resets all changes to the "order_no" field.
 func (m *SmsOrderMutation) ResetOrderNo() {
 	m.order_no = nil
+}
+
+// SetServiceType sets the "service_type" field.
+func (m *SmsOrderMutation) SetServiceType(s string) {
+	m.service_type = &s
+}
+
+// ServiceType returns the value of the "service_type" field in the mutation.
+func (m *SmsOrderMutation) ServiceType() (r string, exists bool) {
+	v := m.service_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServiceType returns the old "service_type" field's value of the SmsOrder entity.
+// If the SmsOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SmsOrderMutation) OldServiceType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldServiceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldServiceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServiceType: %w", err)
+	}
+	return oldValue.ServiceType, nil
+}
+
+// ResetServiceType resets all changes to the "service_type" field.
+func (m *SmsOrderMutation) ResetServiceType() {
+	m.service_type = nil
 }
 
 // SetPhoneNumber sets the "phone_number" field.
@@ -21649,7 +21686,7 @@ func (m *SmsOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SmsOrderMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, smsorder.FieldCreatedAt)
 	}
@@ -21658,6 +21695,9 @@ func (m *SmsOrderMutation) Fields() []string {
 	}
 	if m.order_no != nil {
 		fields = append(fields, smsorder.FieldOrderNo)
+	}
+	if m.service_type != nil {
+		fields = append(fields, smsorder.FieldServiceType)
 	}
 	if m.phone_number != nil {
 		fields = append(fields, smsorder.FieldPhoneNumber)
@@ -21688,6 +21728,8 @@ func (m *SmsOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case smsorder.FieldOrderNo:
 		return m.OrderNo()
+	case smsorder.FieldServiceType:
+		return m.ServiceType()
 	case smsorder.FieldPhoneNumber:
 		return m.PhoneNumber()
 	case smsorder.FieldHeroSmsID:
@@ -21713,6 +21755,8 @@ func (m *SmsOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldUpdatedAt(ctx)
 	case smsorder.FieldOrderNo:
 		return m.OldOrderNo(ctx)
+	case smsorder.FieldServiceType:
+		return m.OldServiceType(ctx)
 	case smsorder.FieldPhoneNumber:
 		return m.OldPhoneNumber(ctx)
 	case smsorder.FieldHeroSmsID:
@@ -21752,6 +21796,13 @@ func (m *SmsOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderNo(v)
+		return nil
+	case smsorder.FieldServiceType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetServiceType(v)
 		return nil
 	case smsorder.FieldPhoneNumber:
 		v, ok := value.(string)
@@ -21872,6 +21923,9 @@ func (m *SmsOrderMutation) ResetField(name string) error {
 		return nil
 	case smsorder.FieldOrderNo:
 		m.ResetOrderNo()
+		return nil
+	case smsorder.FieldServiceType:
+		m.ResetServiceType()
 		return nil
 	case smsorder.FieldPhoneNumber:
 		m.ResetPhoneNumber()

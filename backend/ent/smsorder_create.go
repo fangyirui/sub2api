@@ -56,6 +56,20 @@ func (_c *SmsOrderCreate) SetOrderNo(v string) *SmsOrderCreate {
 	return _c
 }
 
+// SetServiceType sets the "service_type" field.
+func (_c *SmsOrderCreate) SetServiceType(v string) *SmsOrderCreate {
+	_c.mutation.SetServiceType(v)
+	return _c
+}
+
+// SetNillableServiceType sets the "service_type" field if the given value is not nil.
+func (_c *SmsOrderCreate) SetNillableServiceType(v *string) *SmsOrderCreate {
+	if v != nil {
+		_c.SetServiceType(*v)
+	}
+	return _c
+}
+
 // SetPhoneNumber sets the "phone_number" field.
 func (_c *SmsOrderCreate) SetPhoneNumber(v string) *SmsOrderCreate {
 	_c.mutation.SetPhoneNumber(v)
@@ -169,6 +183,10 @@ func (_c *SmsOrderCreate) defaults() {
 		v := smsorder.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.ServiceType(); !ok {
+		v := smsorder.DefaultServiceType
+		_c.mutation.SetServiceType(v)
+	}
 	if _, ok := _c.mutation.PhoneNumber(); !ok {
 		v := smsorder.DefaultPhoneNumber
 		_c.mutation.SetPhoneNumber(v)
@@ -201,6 +219,14 @@ func (_c *SmsOrderCreate) check() error {
 	if v, ok := _c.mutation.OrderNo(); ok {
 		if err := smsorder.OrderNoValidator(v); err != nil {
 			return &ValidationError{Name: "order_no", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.order_no": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.ServiceType(); !ok {
+		return &ValidationError{Name: "service_type", err: errors.New(`ent: missing required field "SmsOrder.service_type"`)}
+	}
+	if v, ok := _c.mutation.ServiceType(); ok {
+		if err := smsorder.ServiceTypeValidator(v); err != nil {
+			return &ValidationError{Name: "service_type", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.service_type": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.PhoneNumber(); ok {
@@ -259,6 +285,10 @@ func (_c *SmsOrderCreate) createSpec() (*SmsOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.OrderNo(); ok {
 		_spec.SetField(smsorder.FieldOrderNo, field.TypeString, value)
 		_node.OrderNo = value
+	}
+	if value, ok := _c.mutation.ServiceType(); ok {
+		_spec.SetField(smsorder.FieldServiceType, field.TypeString, value)
+		_node.ServiceType = value
 	}
 	if value, ok := _c.mutation.PhoneNumber(); ok {
 		_spec.SetField(smsorder.FieldPhoneNumber, field.TypeString, value)
@@ -353,6 +383,18 @@ func (u *SmsOrderUpsert) SetOrderNo(v string) *SmsOrderUpsert {
 // UpdateOrderNo sets the "order_no" field to the value that was provided on create.
 func (u *SmsOrderUpsert) UpdateOrderNo() *SmsOrderUpsert {
 	u.SetExcluded(smsorder.FieldOrderNo)
+	return u
+}
+
+// SetServiceType sets the "service_type" field.
+func (u *SmsOrderUpsert) SetServiceType(v string) *SmsOrderUpsert {
+	u.Set(smsorder.FieldServiceType, v)
+	return u
+}
+
+// UpdateServiceType sets the "service_type" field to the value that was provided on create.
+func (u *SmsOrderUpsert) UpdateServiceType() *SmsOrderUpsert {
+	u.SetExcluded(smsorder.FieldServiceType)
 	return u
 }
 
@@ -510,6 +552,20 @@ func (u *SmsOrderUpsertOne) SetOrderNo(v string) *SmsOrderUpsertOne {
 func (u *SmsOrderUpsertOne) UpdateOrderNo() *SmsOrderUpsertOne {
 	return u.Update(func(s *SmsOrderUpsert) {
 		s.UpdateOrderNo()
+	})
+}
+
+// SetServiceType sets the "service_type" field.
+func (u *SmsOrderUpsertOne) SetServiceType(v string) *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetServiceType(v)
+	})
+}
+
+// UpdateServiceType sets the "service_type" field to the value that was provided on create.
+func (u *SmsOrderUpsertOne) UpdateServiceType() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdateServiceType()
 	})
 }
 
@@ -847,6 +903,20 @@ func (u *SmsOrderUpsertBulk) SetOrderNo(v string) *SmsOrderUpsertBulk {
 func (u *SmsOrderUpsertBulk) UpdateOrderNo() *SmsOrderUpsertBulk {
 	return u.Update(func(s *SmsOrderUpsert) {
 		s.UpdateOrderNo()
+	})
+}
+
+// SetServiceType sets the "service_type" field.
+func (u *SmsOrderUpsertBulk) SetServiceType(v string) *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetServiceType(v)
+	})
+}
+
+// UpdateServiceType sets the "service_type" field to the value that was provided on create.
+func (u *SmsOrderUpsertBulk) UpdateServiceType() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdateServiceType()
 	})
 }
 

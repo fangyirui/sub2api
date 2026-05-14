@@ -48,6 +48,20 @@ func (_u *SmsOrderUpdate) SetNillableOrderNo(v *string) *SmsOrderUpdate {
 	return _u
 }
 
+// SetServiceType sets the "service_type" field.
+func (_u *SmsOrderUpdate) SetServiceType(v string) *SmsOrderUpdate {
+	_u.mutation.SetServiceType(v)
+	return _u
+}
+
+// SetNillableServiceType sets the "service_type" field if the given value is not nil.
+func (_u *SmsOrderUpdate) SetNillableServiceType(v *string) *SmsOrderUpdate {
+	if v != nil {
+		_u.SetServiceType(*v)
+	}
+	return _u
+}
+
 // SetPhoneNumber sets the "phone_number" field.
 func (_u *SmsOrderUpdate) SetPhoneNumber(v string) *SmsOrderUpdate {
 	_u.mutation.SetPhoneNumber(v)
@@ -190,6 +204,11 @@ func (_u *SmsOrderUpdate) check() error {
 			return &ValidationError{Name: "order_no", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.order_no": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ServiceType(); ok {
+		if err := smsorder.ServiceTypeValidator(v); err != nil {
+			return &ValidationError{Name: "service_type", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.service_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.PhoneNumber(); ok {
 		if err := smsorder.PhoneNumberValidator(v); err != nil {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.phone_number": %w`, err)}
@@ -225,6 +244,9 @@ func (_u *SmsOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.OrderNo(); ok {
 		_spec.SetField(smsorder.FieldOrderNo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ServiceType(); ok {
+		_spec.SetField(smsorder.FieldServiceType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.PhoneNumber(); ok {
 		_spec.SetField(smsorder.FieldPhoneNumber, field.TypeString, value)
@@ -289,6 +311,20 @@ func (_u *SmsOrderUpdateOne) SetOrderNo(v string) *SmsOrderUpdateOne {
 func (_u *SmsOrderUpdateOne) SetNillableOrderNo(v *string) *SmsOrderUpdateOne {
 	if v != nil {
 		_u.SetOrderNo(*v)
+	}
+	return _u
+}
+
+// SetServiceType sets the "service_type" field.
+func (_u *SmsOrderUpdateOne) SetServiceType(v string) *SmsOrderUpdateOne {
+	_u.mutation.SetServiceType(v)
+	return _u
+}
+
+// SetNillableServiceType sets the "service_type" field if the given value is not nil.
+func (_u *SmsOrderUpdateOne) SetNillableServiceType(v *string) *SmsOrderUpdateOne {
+	if v != nil {
+		_u.SetServiceType(*v)
 	}
 	return _u
 }
@@ -448,6 +484,11 @@ func (_u *SmsOrderUpdateOne) check() error {
 			return &ValidationError{Name: "order_no", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.order_no": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ServiceType(); ok {
+		if err := smsorder.ServiceTypeValidator(v); err != nil {
+			return &ValidationError{Name: "service_type", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.service_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.PhoneNumber(); ok {
 		if err := smsorder.PhoneNumberValidator(v); err != nil {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.phone_number": %w`, err)}
@@ -500,6 +541,9 @@ func (_u *SmsOrderUpdateOne) sqlSave(ctx context.Context) (_node *SmsOrder, err 
 	}
 	if value, ok := _u.mutation.OrderNo(); ok {
 		_spec.SetField(smsorder.FieldOrderNo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ServiceType(); ok {
+		_spec.SetField(smsorder.FieldServiceType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.PhoneNumber(); ok {
 		_spec.SetField(smsorder.FieldPhoneNumber, field.TypeString, value)
