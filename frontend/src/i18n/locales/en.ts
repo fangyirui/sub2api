@@ -5563,6 +5563,8 @@ export default {
     remaining: 'Remaining: {time}',
     expired: 'Expired',
     confirmActivate: 'This order has not yet been assigned a phone number. Confirm to proceed.',
+    serviceType: 'Service Type',
+    serviceTypeHint: 'Cannot be changed once a number is assigned',
     activateBtn: 'Confirm & Get Number',
     activating: 'Getting number...',
     notFound: 'Order not found, please check the order number',

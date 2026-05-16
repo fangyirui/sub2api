@@ -75,7 +75,7 @@ type SmsOrderRepository interface {
 	Create(ctx context.Context, order *SmsOrder) (*SmsOrder, error)
 	List(ctx context.Context, filter SmsOrderListFilter) (*SmsOrderListResult, error)
 	ListPending(ctx context.Context) ([]*SmsOrder, error)
-	AssignNumber(ctx context.Context, id int64, phone, heroSmsID string, pendingAt time.Time) error
+	AssignNumber(ctx context.Context, id int64, phone, heroSmsID, serviceType string, pendingAt time.Time) error
 	UpdateStatus(ctx context.Context, id int64, status string) error
 	UpdateSmsContent(ctx context.Context, id int64, content string, status string) error
 }
@@ -152,7 +152,11 @@ func (s *SmsOrderService) BatchCreate(ctx context.Context, count int, serviceTyp
 //	created  -> [getNumberWithRetry] -> pending  | failed
 //	pending  -> [getStatus]          -> received | expired (after 20min)
 //	terminal states (received/expired/failed) are returned as-is.
-func (s *SmsOrderService) RefreshSmsContent(ctx context.Context, orderNo string) (*SmsOrder, error) {
+//
+// serviceTypeOverride is only honored when status == created. Once a number has
+// been assigned, the service type is locked and any override is silently ignored.
+// An empty override means "keep the order's existing service type".
+func (s *SmsOrderService) RefreshSmsContent(ctx context.Context, orderNo, serviceTypeOverride string) (*SmsOrder, error) {
 	order, err := s.repo.GetByOrderNo(ctx, orderNo)
 	if err != nil {
 		return nil, err
@@ -160,7 +164,7 @@ func (s *SmsOrderService) RefreshSmsContent(ctx context.Context, orderNo string)
 
 	switch order.Status {
 	case SmsOrderStatusCreated:
-		return s.assignNumber(ctx, order)
+		return s.assignNumber(ctx, order, serviceTypeOverride)
 	case SmsOrderStatusPending:
 		return s.pollPending(ctx, order, s.pendingTimeout())
 	default:
@@ -168,8 +172,13 @@ func (s *SmsOrderService) RefreshSmsContent(ctx context.Context, orderNo string)
 	}
 }
 
-func (s *SmsOrderService) assignNumber(ctx context.Context, order *SmsOrder) (*SmsOrder, error) {
-	num, err := s.heroClient.GetNumberWithRetry(ctx, order.ServiceType)
+func (s *SmsOrderService) assignNumber(ctx context.Context, order *SmsOrder, serviceTypeOverride string) (*SmsOrder, error) {
+	serviceType := order.ServiceType
+	if serviceTypeOverride != "" {
+		serviceType = serviceTypeOverride
+	}
+
+	num, err := s.heroClient.GetNumberWithRetry(ctx, serviceType)
 	if err != nil {
 		if updErr := s.repo.UpdateStatus(ctx, order.ID, SmsOrderStatusFailed); updErr != nil {
 			slog.Error("mark sms order failed", "order_no", order.OrderNo, "error", updErr)
@@ -179,11 +188,12 @@ func (s *SmsOrderService) assignNumber(ctx context.Context, order *SmsOrder) (*S
 	}
 
 	now := time.Now()
-	if err := s.repo.AssignNumber(ctx, order.ID, num.Phone, num.ID, now); err != nil {
+	if err := s.repo.AssignNumber(ctx, order.ID, num.Phone, num.ID, serviceType, now); err != nil {
 		return nil, err
 	}
 	order.PhoneNumber = num.Phone
 	order.HeroSmsID = num.ID
+	order.ServiceType = serviceType
 	order.PendingAt = &now
 	order.Status = SmsOrderStatusPending
 	return order, nil

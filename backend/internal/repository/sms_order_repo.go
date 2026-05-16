@@ -119,10 +119,11 @@ func (r *smsOrderRepository) ListPending(ctx context.Context) ([]*service.SmsOrd
 	return result, nil
 }
 
-func (r *smsOrderRepository) AssignNumber(ctx context.Context, id int64, phone, heroSmsID string, pendingAt time.Time) error {
+func (r *smsOrderRepository) AssignNumber(ctx context.Context, id int64, phone, heroSmsID, serviceType string, pendingAt time.Time) error {
 	return r.client.SmsOrder.UpdateOneID(id).
 		SetPhoneNumber(phone).
 		SetHeroSmsID(heroSmsID).
+		SetServiceType(serviceType).
 		SetPendingAt(pendingAt).
 		SetStatus(service.SmsOrderStatusPending).
 		Exec(ctx)

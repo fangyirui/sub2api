@@ -32,12 +32,21 @@ export async function queryByOrderNo(orderNo: string): Promise<SmsOrderResponse>
  *  - status=pending → polls hero-sms for the verification code.
  *  - terminal states are returned as-is.
  *
+ * `serviceType` is only honored when the order is in the `created` state; once
+ * a phone number is assigned, the server locks the service type and ignores
+ * this field.
+ *
  * Long-running: the server may retry up to 6 times when fetching a phone number,
  * so the request can take up to ~30 seconds in the worst case.
  */
-export async function refreshOrder(orderNo: string): Promise<SmsOrderResponse> {
+export async function refreshOrder(
+  orderNo: string,
+  serviceType?: 'claude' | 'openai'
+): Promise<SmsOrderResponse> {
+  const body = serviceType ? { service_type: serviceType } : undefined
   const response = await apiClient.post<SmsOrderResponse>(
-    `/sms-orders/${encodeURIComponent(orderNo)}/refresh`
+    `/sms-orders/${encodeURIComponent(orderNo)}/refresh`,
+    body
   )
   return response.data
 }

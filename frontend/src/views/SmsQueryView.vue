@@ -161,19 +161,61 @@
             </div>
 
             <!-- Activate Confirmation (status=created) -->
-            <div v-if="result.status === 'created'" class="rounded-xl border border-blue-200 bg-blue-50 p-5 text-center dark:border-blue-900/40 dark:bg-blue-900/10">
-              <p class="mb-4 text-sm text-blue-800 dark:text-blue-200">{{ t('smsQuery.confirmActivate') }}</p>
-              <button
-                @click="doActivate"
-                :disabled="loading"
-                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:from-blue-600 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <svg v-if="loading" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-                {{ loading ? t('smsQuery.activating') : t('smsQuery.activateBtn') }}
-              </button>
+            <div v-if="result.status === 'created'" class="rounded-xl border border-blue-200 bg-blue-50 p-5 dark:border-blue-900/40 dark:bg-blue-900/10">
+              <p class="mb-4 text-center text-sm text-blue-800 dark:text-blue-200">{{ t('smsQuery.confirmActivate') }}</p>
+
+              <div class="mb-4">
+                <label class="mb-2 block text-xs font-medium text-blue-800 dark:text-blue-200">
+                  {{ t('smsQuery.serviceType') }}
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    @click="selectedServiceType = 'claude'"
+                    :disabled="loading"
+                    :class="[
+                      'rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                      selectedServiceType === 'claude'
+                        ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
+                        : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900/40 dark:bg-dark-800 dark:text-blue-200 dark:hover:bg-blue-900/20',
+                      loading ? 'cursor-not-allowed opacity-60' : ''
+                    ]"
+                  >
+                    Claude
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectedServiceType = 'openai'"
+                    :disabled="loading"
+                    :class="[
+                      'rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                      selectedServiceType === 'openai'
+                        ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
+                        : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900/40 dark:bg-dark-800 dark:text-blue-200 dark:hover:bg-blue-900/20',
+                      loading ? 'cursor-not-allowed opacity-60' : ''
+                    ]"
+                  >
+                    OpenAI
+                  </button>
+                </div>
+                <p class="mt-2 text-xs text-blue-700/70 dark:text-blue-300/70">
+                  {{ t('smsQuery.serviceTypeHint') }}
+                </p>
+              </div>
+
+              <div class="text-center">
+                <button
+                  @click="doActivate"
+                  :disabled="loading"
+                  class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:from-blue-600 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <svg v-if="loading" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  {{ loading ? t('smsQuery.activating') : t('smsQuery.activateBtn') }}
+                </button>
+              </div>
             </div>
 
             <!-- Phone (status=pending/received) -->
@@ -280,6 +322,7 @@ const loading = ref(false)
 const result = ref<SmsOrderResponse | null>(null)
 const error = ref('')
 const queried = ref(false)
+const selectedServiceType = ref<'claude' | 'openai'>('claude')
 
 async function doQuery() {
   const no = orderNo.value.trim()
@@ -291,6 +334,10 @@ async function doQuery() {
 
   try {
     result.value = await queryByOrderNo(no)
+    if (result.value?.status === 'created') {
+      const t = result.value.service_type
+      selectedServiceType.value = t === 'openai' ? 'openai' : 'claude'
+    }
   } catch (err: any) {
     if (err?.status === 404 || err?.code === 'SMS_ORDER_NOT_FOUND') {
       result.value = null
@@ -310,7 +357,7 @@ async function doActivate() {
   error.value = ''
 
   try {
-    result.value = await refreshOrder(no)
+    result.value = await refreshOrder(no, selectedServiceType.value)
   } catch (err: any) {
     if (err?.code === 'SMS_ORDER_FETCH_FAILED') {
       error.value = t('smsQuery.fetchFailed')

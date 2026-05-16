@@ -40,6 +40,11 @@ func (h *SmsOrderHandler) Query(c *gin.Context) {
 
 // Refresh triggers a manual refresh of SMS content for an order.
 // POST /api/v1/sms-orders/:order_no/refresh
+//
+// Optional JSON body: {"service_type": "claude" | "openai"}.
+// The service_type is only honored when the order is in the `created` state
+// (i.e., no phone number assigned yet). Once a number has been fetched, the
+// service type is locked and the field is ignored.
 func (h *SmsOrderHandler) Refresh(c *gin.Context) {
 	orderNo := c.Param("order_no")
 	if orderNo == "" {
@@ -47,7 +52,18 @@ func (h *SmsOrderHandler) Refresh(c *gin.Context) {
 		return
 	}
 
-	order, err := h.smsOrderService.RefreshSmsContent(c.Request.Context(), orderNo)
+	var req struct {
+		ServiceType string `json:"service_type"`
+	}
+	// Body is optional; ShouldBindJSON returns an error on empty bodies which we ignore.
+	_ = c.ShouldBindJSON(&req)
+
+	if req.ServiceType != "" && req.ServiceType != "claude" && req.ServiceType != "openai" {
+		response.BadRequest(c, "service_type must be 'claude' or 'openai'")
+		return
+	}
+
+	order, err := h.smsOrderService.RefreshSmsContent(c.Request.Context(), orderNo, req.ServiceType)
 	if err != nil {
 		response.ErrorFrom(c, err)
 		return

@@ -5749,6 +5749,8 @@ export default {
     remaining: '剩余时间：{time}',
     expired: '已过期',
     confirmActivate: '该订单尚未获取手机号码，确认后将为您分配号码',
+    serviceType: '服务类型',
+    serviceTypeHint: '一旦获取号码后将无法修改',
     activateBtn: '确认获取号码',
     activating: '正在获取...',
     notFound: '未找到该订单，请检查订单号是否正确',
