@@ -285,6 +285,8 @@ func (s *SettingService) GetPublicSettingsForInjection(ctx context.Context) (any
 		DocURL                           string          `json:"doc_url,omitempty"`
 		HomeContent                      string          `json:"home_content,omitempty"`
 		SmsQueryNotice                   string          `json:"sms_query_notice,omitempty"`
+		SmsServiceTypeClaudeEnabled      bool            `json:"sms_service_type_claude_enabled"`
+		SmsServiceTypeOpenaiEnabled      bool            `json:"sms_service_type_openai_enabled"`
 		HideCcsImportButton              bool            `json:"hide_ccs_import_button"`
 		PurchaseSubscriptionEnabled      bool            `json:"purchase_subscription_enabled"`
 		PurchaseSubscriptionURL          string          `json:"purchase_subscription_url,omitempty"`
@@ -316,6 +318,8 @@ func (s *SettingService) GetPublicSettingsForInjection(ctx context.Context) (any
 		DocURL:                           settings.DocURL,
 		HomeContent:                      settings.HomeContent,
 		SmsQueryNotice:                   settings.SmsQueryNotice,
+		SmsServiceTypeClaudeEnabled:      settings.SmsServiceTypeClaudeEnabled,
+		SmsServiceTypeOpenaiEnabled:      settings.SmsServiceTypeOpenaiEnabled,
 		HideCcsImportButton:              settings.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:      settings.PurchaseSubscriptionEnabled,
 		PurchaseSubscriptionURL:          settings.PurchaseSubscriptionURL,
@@ -980,8 +984,8 @@ func (s *SettingService) parseSettings(settings map[string]string) *SystemSettin
 		HomeContent:                      settings[SettingKeyHomeContent],
 		SmsQueryNotice:                   settings[SettingKeySmsQueryNotice],
 		SmsOrderCopyTemplate:             settings[SettingKeySmsOrderCopyTemplate],
-		SmsServiceTypeClaudeEnabled:      settings[SettingKeySmsServiceTypeClaudeEnabled] != "false",
-		SmsServiceTypeOpenaiEnabled:      settings[SettingKeySmsServiceTypeOpenaiEnabled] != "false",
+		SmsServiceTypeClaudeEnabled:      settings[SettingKeySmsServiceTypeClaudeEnabled] != "false", // 默认启用
+		SmsServiceTypeOpenaiEnabled:      settings[SettingKeySmsServiceTypeOpenaiEnabled] != "false", // 默认启用
 		HideCcsImportButton:              settings[SettingKeyHideCcsImportButton] == "true",
 		PurchaseSubscriptionEnabled:      settings[SettingKeyPurchaseSubscriptionEnabled] == "true",
 		PurchaseSubscriptionURL:          strings.TrimSpace(settings[SettingKeyPurchaseSubscriptionURL]),

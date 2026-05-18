@@ -141,7 +141,7 @@ const (
 	SettingKeyDocURL                      = "doc_url"                       // 文档链接
 	SettingKeyHomeContent                 = "home_content"                  // 首页内容（支持 Markdown/HTML，或 URL 作为 iframe src）
 	SettingKeySmsQueryNotice              = "sms_query_notice"               // SMS 查询页面公告文本
-	SettingKeySmsOrderCopyTemplate        = "sms_order_copy_template"                     // SMS 订单复制模板
+	SettingKeySmsOrderCopyTemplate       = "sms_order_copy_template"        // SMS 订单复制模板
 	SettingKeySmsServiceTypeClaudeEnabled = "sms_service_type_claude_enabled" // SMS 激活页是否允许用户选择 Claude
 	SettingKeySmsServiceTypeOpenaiEnabled = "sms_service_type_openai_enabled" // SMS 激活页是否允许用户选择 OpenAI
 	SettingKeyHideCcsImportButton         = "hide_ccs_import_button"        // 是否隐藏 API Keys 页面的导入 CCS 按钮
