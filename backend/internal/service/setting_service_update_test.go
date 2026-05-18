@@ -223,3 +223,20 @@ func TestSettingService_UpdateSettings_TablePreferences(t *testing.T) {
 	require.Equal(t, "1000", repo.updates[SettingKeyTableDefaultPageSize])
 	require.Equal(t, "[20,100]", repo.updates[SettingKeyTablePageSizeOptions])
 }
+
+func TestSettingService_UpdateSettings_PersistsSmsServiceTypeFlags(t *testing.T) {
+	repo := &settingUpdateRepoStub{}
+	svc := NewSettingService(repo, &config.Config{})
+
+	input := &SystemSettings{
+		SmsServiceTypeClaudeEnabled: true,
+		SmsServiceTypeOpenaiEnabled: false,
+		// Required scalars to avoid panics elsewhere in the path:
+		TableDefaultPageSize: 20,
+		TablePageSizeOptions: []int{10, 20, 50, 100},
+	}
+
+	require.NoError(t, svc.UpdateSettings(context.Background(), input))
+	require.Equal(t, "true", repo.updates[SettingKeySmsServiceTypeClaudeEnabled])
+	require.Equal(t, "false", repo.updates[SettingKeySmsServiceTypeOpenaiEnabled])
+}
