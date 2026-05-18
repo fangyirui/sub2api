@@ -160,6 +160,8 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 		SettingKeyDocURL,
 		SettingKeyHomeContent,
 		SettingKeySmsQueryNotice,
+		SettingKeySmsServiceTypeClaudeEnabled,
+		SettingKeySmsServiceTypeOpenaiEnabled,
 		SettingKeyHideCcsImportButton,
 		SettingKeyPurchaseSubscriptionEnabled,
 		SettingKeyPurchaseSubscriptionURL,
@@ -228,6 +230,8 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 		DocURL:                           settings[SettingKeyDocURL],
 		HomeContent:                      settings[SettingKeyHomeContent],
 		SmsQueryNotice:                   settings[SettingKeySmsQueryNotice],
+		SmsServiceTypeClaudeEnabled:      settings[SettingKeySmsServiceTypeClaudeEnabled] != "false", // 默认启用
+		SmsServiceTypeOpenaiEnabled:      settings[SettingKeySmsServiceTypeOpenaiEnabled] != "false", // 默认启用
 		HideCcsImportButton:              settings[SettingKeyHideCcsImportButton] == "true",
 		PurchaseSubscriptionEnabled:      settings[SettingKeyPurchaseSubscriptionEnabled] == "true",
 		PurchaseSubscriptionURL:          strings.TrimSpace(settings[SettingKeyPurchaseSubscriptionURL]),
@@ -976,6 +980,8 @@ func (s *SettingService) parseSettings(settings map[string]string) *SystemSettin
 		HomeContent:                      settings[SettingKeyHomeContent],
 		SmsQueryNotice:                   settings[SettingKeySmsQueryNotice],
 		SmsOrderCopyTemplate:             settings[SettingKeySmsOrderCopyTemplate],
+		SmsServiceTypeClaudeEnabled:      settings[SettingKeySmsServiceTypeClaudeEnabled] != "false",
+		SmsServiceTypeOpenaiEnabled:      settings[SettingKeySmsServiceTypeOpenaiEnabled] != "false",
 		HideCcsImportButton:              settings[SettingKeyHideCcsImportButton] == "true",
 		PurchaseSubscriptionEnabled:      settings[SettingKeyPurchaseSubscriptionEnabled] == "true",
 		PurchaseSubscriptionURL:          strings.TrimSpace(settings[SettingKeyPurchaseSubscriptionURL]),

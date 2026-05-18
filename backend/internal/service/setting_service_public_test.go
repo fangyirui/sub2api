@@ -77,3 +77,28 @@ func TestSettingService_GetPublicSettings_ExposesTablePreferences(t *testing.T) 
 	require.Equal(t, 50, settings.TableDefaultPageSize)
 	require.Equal(t, []int{20, 50, 100}, settings.TablePageSizeOptions)
 }
+
+func TestSettingService_GetPublicSettings_SmsServiceTypeDefaultsToTrue(t *testing.T) {
+	repo := &settingPublicRepoStub{values: map[string]string{}}
+	svc := NewSettingService(repo, &config.Config{})
+
+	settings, err := svc.GetPublicSettings(context.Background())
+	require.NoError(t, err)
+	require.True(t, settings.SmsServiceTypeClaudeEnabled, "claude should default to enabled")
+	require.True(t, settings.SmsServiceTypeOpenaiEnabled, "openai should default to enabled")
+}
+
+func TestSettingService_GetPublicSettings_SmsServiceTypeRespectsFalse(t *testing.T) {
+	repo := &settingPublicRepoStub{
+		values: map[string]string{
+			SettingKeySmsServiceTypeClaudeEnabled: "true",
+			SettingKeySmsServiceTypeOpenaiEnabled: "false",
+		},
+	}
+	svc := NewSettingService(repo, &config.Config{})
+
+	settings, err := svc.GetPublicSettings(context.Background())
+	require.NoError(t, err)
+	require.True(t, settings.SmsServiceTypeClaudeEnabled)
+	require.False(t, settings.SmsServiceTypeOpenaiEnabled)
+}

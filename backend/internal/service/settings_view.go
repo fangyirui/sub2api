@@ -65,6 +65,8 @@ type SystemSettings struct {
 	HomeContent                 string
 	SmsQueryNotice              string
 	SmsOrderCopyTemplate        string
+	SmsServiceTypeClaudeEnabled bool
+	SmsServiceTypeOpenaiEnabled bool
 	HideCcsImportButton         bool
 	PurchaseSubscriptionEnabled bool
 	PurchaseSubscriptionURL     string
@@ -133,6 +135,8 @@ type PublicSettings struct {
 	DocURL                           string
 	HomeContent                      string
 	SmsQueryNotice                   string
+	SmsServiceTypeClaudeEnabled      bool
+	SmsServiceTypeOpenaiEnabled      bool
 	HideCcsImportButton              bool
 
 	PurchaseSubscriptionEnabled bool
