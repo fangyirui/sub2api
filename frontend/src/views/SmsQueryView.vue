@@ -164,49 +164,71 @@
             <div v-if="result.status === 'created'" class="rounded-xl border border-blue-200 bg-blue-50 p-5 dark:border-blue-900/40 dark:bg-blue-900/10">
               <p class="mb-4 text-center text-sm text-blue-800 dark:text-blue-200">{{ t('smsQuery.confirmActivate') }}</p>
 
-              <div class="mb-4">
+              <div class="mb-4" v-if="anyServiceTypeEnabled">
                 <label class="mb-2 block text-xs font-medium text-blue-800 dark:text-blue-200">
                   {{ t('smsQuery.serviceType') }}
                 </label>
                 <div class="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    @click="selectedServiceType = 'claude'"
-                    :disabled="loading"
-                    :class="[
-                      'rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
-                      selectedServiceType === 'claude'
-                        ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
-                        : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900/40 dark:bg-dark-800 dark:text-blue-200 dark:hover:bg-blue-900/20',
-                      loading ? 'cursor-not-allowed opacity-60' : ''
-                    ]"
-                  >
-                    Claude
-                  </button>
-                  <button
-                    type="button"
-                    @click="selectedServiceType = 'openai'"
-                    :disabled="loading"
-                    :class="[
-                      'rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
-                      selectedServiceType === 'openai'
-                        ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
-                        : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900/40 dark:bg-dark-800 dark:text-blue-200 dark:hover:bg-blue-900/20',
-                      loading ? 'cursor-not-allowed opacity-60' : ''
-                    ]"
-                  >
-                    OpenAI
-                  </button>
+                  <div class="relative">
+                    <button
+                      type="button"
+                      @click="claudeEnabled && (selectedServiceType = 'claude')"
+                      :disabled="loading || !claudeEnabled"
+                      :class="[
+                        'w-full rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                        selectedServiceType === 'claude' && claudeEnabled
+                          ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
+                          : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900/40 dark:bg-dark-800 dark:text-blue-200 dark:hover:bg-blue-900/20',
+                        (loading || !claudeEnabled) ? 'cursor-not-allowed opacity-50 grayscale' : ''
+                      ]"
+                    >
+                      Claude
+                    </button>
+                    <span
+                      v-if="!claudeEnabled"
+                      class="pointer-events-none absolute -top-2 right-1 rounded-full bg-gray-500 px-1.5 py-0.5 text-[10px] font-medium leading-none text-white shadow"
+                    >
+                      {{ t('smsQuery.outOfStock') }}
+                    </span>
+                  </div>
+                  <div class="relative">
+                    <button
+                      type="button"
+                      @click="openaiEnabled && (selectedServiceType = 'openai')"
+                      :disabled="loading || !openaiEnabled"
+                      :class="[
+                        'w-full rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                        selectedServiceType === 'openai' && openaiEnabled
+                          ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
+                          : 'border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900/40 dark:bg-dark-800 dark:text-blue-200 dark:hover:bg-blue-900/20',
+                        (loading || !openaiEnabled) ? 'cursor-not-allowed opacity-50 grayscale' : ''
+                      ]"
+                    >
+                      OpenAI
+                    </button>
+                    <span
+                      v-if="!openaiEnabled"
+                      class="pointer-events-none absolute -top-2 right-1 rounded-full bg-gray-500 px-1.5 py-0.5 text-[10px] font-medium leading-none text-white shadow"
+                    >
+                      {{ t('smsQuery.outOfStock') }}
+                    </span>
+                  </div>
                 </div>
                 <p class="mt-2 text-xs text-blue-700/70 dark:text-blue-300/70">
                   {{ t('smsQuery.serviceTypeHint') }}
                 </p>
               </div>
+              <div
+                v-else
+                class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-center text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-200"
+              >
+                {{ t('smsQuery.allServicesUnavailable') }}
+              </div>
 
               <div class="text-center">
                 <button
                   @click="doActivate"
-                  :disabled="loading"
+                  :disabled="loading || !anyServiceTypeEnabled"
                   class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:from-blue-600 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <svg v-if="loading" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -322,7 +344,17 @@ const loading = ref(false)
 const result = ref<SmsOrderResponse | null>(null)
 const error = ref('')
 const queried = ref(false)
-const selectedServiceType = ref<'claude' | 'openai'>('claude')
+const claudeEnabled = computed(
+  () => appStore.cachedPublicSettings?.sms_service_type_claude_enabled !== false
+)
+const openaiEnabled = computed(
+  () => appStore.cachedPublicSettings?.sms_service_type_openai_enabled !== false
+)
+const anyServiceTypeEnabled = computed(() => claudeEnabled.value || openaiEnabled.value)
+
+const selectedServiceType = ref<'claude' | 'openai'>(
+  appStore.cachedPublicSettings?.sms_service_type_claude_enabled !== false ? 'claude' : 'openai'
+)
 
 async function doQuery() {
   const no = orderNo.value.trim()
@@ -384,6 +416,12 @@ async function doRefreshCode() {
     loading.value = false
   }
 }
+
+watch([claudeEnabled, openaiEnabled], ([c, o]) => {
+  if (result.value?.status !== 'created') return
+  if (selectedServiceType.value === 'claude' && !c && o) selectedServiceType.value = 'openai'
+  if (selectedServiceType.value === 'openai' && !o && c) selectedServiceType.value = 'claude'
+})
 
 function statusClass(status: string): string {
   switch (status) {
