@@ -366,7 +366,10 @@ async function doQuery() {
     result.value = await queryByOrderNo(no)
     if (result.value?.status === 'created') {
       const t = result.value.service_type
-      selectedServiceType.value = t === 'openai' ? 'openai' : 'claude'
+      let next: 'claude' | 'openai' = t === 'openai' ? 'openai' : 'claude'
+      if (next === 'claude' && !claudeEnabled.value && openaiEnabled.value) next = 'openai'
+      else if (next === 'openai' && !openaiEnabled.value && claudeEnabled.value) next = 'claude'
+      selectedServiceType.value = next
     }
   } catch (err: any) {
     if (err?.status === 404 || err?.code === 'SMS_ORDER_NOT_FOUND') {
