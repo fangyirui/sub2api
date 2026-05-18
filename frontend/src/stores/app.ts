@@ -333,6 +333,8 @@ export const useAppStore = defineStore('app', () => {
         doc_url: docUrl.value,
         home_content: '',
         sms_query_notice: '',
+        sms_service_type_claude_enabled: true,
+        sms_service_type_openai_enabled: true,
         hide_ccs_import_button: false,
         payment_enabled: false,
         table_default_page_size: 20,

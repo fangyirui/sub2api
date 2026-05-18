@@ -104,6 +104,8 @@ export interface PublicSettings {
   doc_url: string
   home_content: string
   sms_query_notice: string
+  sms_service_type_claude_enabled: boolean
+  sms_service_type_openai_enabled: boolean
   hide_ccs_import_button: boolean
   payment_enabled: boolean
   table_default_page_size: number
