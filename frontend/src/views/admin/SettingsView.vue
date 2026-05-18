@@ -2004,6 +2004,30 @@
               </p>
             </div>
 
+            <!-- SMS Service Type Toggles -->
+            <div class="border-t border-gray-100 pt-4 dark:border-dark-700">
+              <h4 class="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                {{ t('admin.settings.site.smsServiceTypeTitle') }}
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <label class="font-medium text-gray-900 dark:text-white">
+                    {{ t('admin.settings.site.smsServiceTypeClaude') }}
+                  </label>
+                  <Toggle v-model="form.sms_service_type_claude_enabled" />
+                </div>
+                <div class="flex items-center justify-between">
+                  <label class="font-medium text-gray-900 dark:text-white">
+                    {{ t('admin.settings.site.smsServiceTypeOpenai') }}
+                  </label>
+                  <Toggle v-model="form.sms_service_type_openai_enabled" />
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  {{ t('admin.settings.site.smsServiceTypeHint') }}
+                </p>
+              </div>
+            </div>
+
             <!-- Hide CCS Import Button -->
             <div
               class="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-dark-700"
@@ -3111,6 +3135,8 @@ async function saveSettings() {
       home_content: form.home_content,
       sms_query_notice: form.sms_query_notice,
       sms_order_copy_template: form.sms_order_copy_template,
+      sms_service_type_claude_enabled: form.sms_service_type_claude_enabled,
+      sms_service_type_openai_enabled: form.sms_service_type_openai_enabled,
       backend_mode_enabled: form.backend_mode_enabled,
       hide_ccs_import_button: form.hide_ccs_import_button,
       table_default_page_size: form.table_default_page_size,
