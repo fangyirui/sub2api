@@ -2006,9 +2006,9 @@
 
             <!-- SMS Service Type Toggles -->
             <div class="border-t border-gray-100 pt-4 dark:border-dark-700">
-              <h4 class="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label class="mb-3 block font-medium text-gray-900 dark:text-white">
                 {{ t('admin.settings.site.smsServiceTypeTitle') }}
-              </h4>
+              </label>
               <div class="space-y-3">
                 <div class="flex items-center justify-between">
                   <label class="font-medium text-gray-900 dark:text-white">
