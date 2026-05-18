@@ -49,6 +49,8 @@ func (h *SettingHandler) GetPublicSettings(c *gin.Context) {
 		DocURL:                           settings.DocURL,
 		HomeContent:                      settings.HomeContent,
 		SmsQueryNotice:                   settings.SmsQueryNotice,
+		SmsServiceTypeClaudeEnabled:      settings.SmsServiceTypeClaudeEnabled,
+		SmsServiceTypeOpenaiEnabled:      settings.SmsServiceTypeOpenaiEnabled,
 		HideCcsImportButton:              settings.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:      settings.PurchaseSubscriptionEnabled,
 		PurchaseSubscriptionURL:          settings.PurchaseSubscriptionURL,

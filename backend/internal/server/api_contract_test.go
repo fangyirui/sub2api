@@ -606,7 +606,11 @@ func TestAPIContracts(t *testing.T) {
 					"payment_cancel_rate_limit_unit": "",
 					"payment_cancel_rate_limit_window_mode": "",
 					"custom_menu_items": [],
-					"custom_endpoints": []
+					"custom_endpoints": [],
+					"sms_query_notice": "",
+					"sms_order_copy_template": "",
+					"sms_service_type_claude_enabled": true,
+					"sms_service_type_openai_enabled": true
 				}
 			}`,
 		},
