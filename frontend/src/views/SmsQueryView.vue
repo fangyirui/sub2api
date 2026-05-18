@@ -172,7 +172,7 @@
                   <div class="relative">
                     <button
                       type="button"
-                      @click="claudeEnabled && (selectedServiceType = 'claude')"
+                      @click="selectedServiceType = 'claude'"
                       :disabled="loading || !claudeEnabled"
                       :class="[
                         'w-full rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
@@ -194,7 +194,7 @@
                   <div class="relative">
                     <button
                       type="button"
-                      @click="openaiEnabled && (selectedServiceType = 'openai')"
+                      @click="selectedServiceType = 'openai'"
                       :disabled="loading || !openaiEnabled"
                       :class="[
                         'w-full rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
@@ -352,9 +352,7 @@ const openaiEnabled = computed(
 )
 const anyServiceTypeEnabled = computed(() => claudeEnabled.value || openaiEnabled.value)
 
-const selectedServiceType = ref<'claude' | 'openai'>(
-  appStore.cachedPublicSettings?.sms_service_type_claude_enabled !== false ? 'claude' : 'openai'
-)
+const selectedServiceType = ref<'claude' | 'openai'>('claude')
 
 async function doQuery() {
   const no = orderNo.value.trim()
