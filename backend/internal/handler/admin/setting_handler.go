@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -150,6 +151,8 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 		SmsQueryNotice:                       settings.SmsQueryNotice,
 		SmsServiceTypeClaudeEnabled:          settings.SmsServiceTypeClaudeEnabled,
 		SmsServiceTypeOpenaiEnabled:          settings.SmsServiceTypeOpenaiEnabled,
+		SmsServiceTypeClaudeMaxPrice:         settings.SmsServiceTypeClaudeMaxPrice,
+		SmsServiceTypeOpenaiMaxPrice:         settings.SmsServiceTypeOpenaiMaxPrice,
 		SmsOrderCopyTemplate:                 settings.SmsOrderCopyTemplate,
 		HideCcsImportButton:                  settings.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:          settings.PurchaseSubscriptionEnabled,
@@ -265,9 +268,11 @@ type UpdateSettingsRequest struct {
 	DocURL                      string                `json:"doc_url"`
 	HomeContent                 string                `json:"home_content"`
 	SmsQueryNotice              string                `json:"sms_query_notice"`
-	SmsServiceTypeClaudeEnabled bool                  `json:"sms_service_type_claude_enabled"`
-	SmsServiceTypeOpenaiEnabled bool                  `json:"sms_service_type_openai_enabled"`
-	SmsOrderCopyTemplate        string                `json:"sms_order_copy_template"`
+	SmsServiceTypeClaudeEnabled  bool                  `json:"sms_service_type_claude_enabled"`
+	SmsServiceTypeOpenaiEnabled  bool                  `json:"sms_service_type_openai_enabled"`
+	SmsServiceTypeClaudeMaxPrice string                `json:"sms_service_type_claude_max_price"`
+	SmsServiceTypeOpenaiMaxPrice string                `json:"sms_service_type_openai_max_price"`
+	SmsOrderCopyTemplate         string                `json:"sms_order_copy_template"`
 	HideCcsImportButton         bool                  `json:"hide_ccs_import_button"`
 	PurchaseSubscriptionEnabled *bool                 `json:"purchase_subscription_enabled"`
 	PurchaseSubscriptionURL     *string               `json:"purchase_subscription_url"`
@@ -774,6 +779,16 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		}
 	}
 
+	// 验证 SMS maxPrice（空字符串允许，表示恢复默认；非空必须为正浮点数）
+	if err := validateSmsMaxPrice("sms_service_type_claude_max_price", req.SmsServiceTypeClaudeMaxPrice); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	if err := validateSmsMaxPrice("sms_service_type_openai_max_price", req.SmsServiceTypeOpenaiMaxPrice); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	settings := &service.SystemSettings{
 		RegistrationEnabled:              req.RegistrationEnabled,
 		EmailVerifyEnabled:               req.EmailVerifyEnabled,
@@ -829,6 +844,8 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		SmsQueryNotice:                   req.SmsQueryNotice,
 		SmsServiceTypeClaudeEnabled:      req.SmsServiceTypeClaudeEnabled,
 		SmsServiceTypeOpenaiEnabled:      req.SmsServiceTypeOpenaiEnabled,
+		SmsServiceTypeClaudeMaxPrice:     req.SmsServiceTypeClaudeMaxPrice,
+		SmsServiceTypeOpenaiMaxPrice:     req.SmsServiceTypeOpenaiMaxPrice,
 		SmsOrderCopyTemplate:             req.SmsOrderCopyTemplate,
 		HideCcsImportButton:              req.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:      purchaseEnabled,
@@ -1014,6 +1031,8 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		SmsQueryNotice:                       updatedSettings.SmsQueryNotice,
 		SmsServiceTypeClaudeEnabled:          updatedSettings.SmsServiceTypeClaudeEnabled,
 		SmsServiceTypeOpenaiEnabled:          updatedSettings.SmsServiceTypeOpenaiEnabled,
+		SmsServiceTypeClaudeMaxPrice:         updatedSettings.SmsServiceTypeClaudeMaxPrice,
+		SmsServiceTypeOpenaiMaxPrice:         updatedSettings.SmsServiceTypeOpenaiMaxPrice,
 		SmsOrderCopyTemplate:                 updatedSettings.SmsOrderCopyTemplate,
 		HideCcsImportButton:                  updatedSettings.HideCcsImportButton,
 		PurchaseSubscriptionEnabled:          updatedSettings.PurchaseSubscriptionEnabled,
@@ -1062,6 +1081,19 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		PaymentCancelRateLimitUnit:           updatedPaymentCfg.CancelRateLimitUnit,
 		PaymentCancelRateLimitMode:           updatedPaymentCfg.CancelRateLimitMode,
 	})
+}
+
+// validateSmsMaxPrice checks that value is either empty (reset to default) or a positive float.
+func validateSmsMaxPrice(field, value string) error {
+	v := strings.TrimSpace(value)
+	if v == "" {
+		return nil
+	}
+	parsed, err := strconv.ParseFloat(v, 64)
+	if err != nil || parsed <= 0 {
+		return fmt.Errorf("%s must be a positive number", field)
+	}
+	return nil
 }
 
 // hasPaymentFields returns true if any payment-related field was explicitly provided.

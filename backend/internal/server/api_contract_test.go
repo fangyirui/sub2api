@@ -610,7 +610,9 @@ func TestAPIContracts(t *testing.T) {
 					"sms_query_notice": "",
 					"sms_order_copy_template": "",
 					"sms_service_type_claude_enabled": true,
-					"sms_service_type_openai_enabled": true
+					"sms_service_type_openai_enabled": true,
+					"sms_service_type_claude_max_price": "0.07",
+					"sms_service_type_openai_max_price": "0.35"
 				}
 			}`,
 		},
