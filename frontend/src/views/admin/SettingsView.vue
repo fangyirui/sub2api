@@ -2025,6 +2025,37 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                   {{ t('admin.settings.site.smsServiceTypeHint') }}
                 </p>
+                <div class="space-y-2 border-t border-gray-100 pt-3 dark:border-dark-700">
+                  <div class="flex items-center justify-between gap-3">
+                    <label class="font-medium text-gray-900 dark:text-white">
+                      {{ t('admin.settings.site.smsServiceTypeClaudeMaxPrice') }}
+                    </label>
+                    <input
+                      v-model="form.sms_service_type_claude_max_price"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.07"
+                      class="w-32 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-right text-sm text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white"
+                    />
+                  </div>
+                  <div class="flex items-center justify-between gap-3">
+                    <label class="font-medium text-gray-900 dark:text-white">
+                      {{ t('admin.settings.site.smsServiceTypeOpenaiMaxPrice') }}
+                    </label>
+                    <input
+                      v-model="form.sms_service_type_openai_max_price"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.35"
+                      class="w-32 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-right text-sm text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white"
+                    />
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    {{ t('admin.settings.site.smsServiceTypeMaxPriceHint') }}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -3139,6 +3170,8 @@ async function saveSettings() {
       sms_order_copy_template: form.sms_order_copy_template,
       sms_service_type_claude_enabled: form.sms_service_type_claude_enabled,
       sms_service_type_openai_enabled: form.sms_service_type_openai_enabled,
+      sms_service_type_claude_max_price: form.sms_service_type_claude_max_price,
+      sms_service_type_openai_max_price: form.sms_service_type_openai_max_price,
       backend_mode_enabled: form.backend_mode_enabled,
       hide_ccs_import_button: form.hide_ccs_import_button,
       table_default_page_size: form.table_default_page_size,
