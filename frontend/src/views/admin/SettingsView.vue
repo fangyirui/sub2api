@@ -2716,6 +2716,8 @@ const form = reactive<SettingsForm>({
   sms_query_notice: '',
   sms_service_type_claude_enabled: true,
   sms_service_type_openai_enabled: true,
+  sms_service_type_claude_max_price: '',
+  sms_service_type_openai_max_price: '',
   sms_order_copy_template: '',
   backend_mode_enabled: false,
   hide_ccs_import_button: false,

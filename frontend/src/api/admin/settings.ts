@@ -40,6 +40,8 @@ export interface SystemSettings {
   sms_query_notice: string
   sms_service_type_claude_enabled: boolean
   sms_service_type_openai_enabled: boolean
+  sms_service_type_claude_max_price: string
+  sms_service_type_openai_max_price: string
   sms_order_copy_template: string
   hide_ccs_import_button: boolean
   table_default_page_size: number
@@ -162,6 +164,8 @@ export interface UpdateSettingsRequest {
   sms_query_notice?: string
   sms_service_type_claude_enabled?: boolean
   sms_service_type_openai_enabled?: boolean
+  sms_service_type_claude_max_price?: string
+  sms_service_type_openai_max_price?: string
   sms_order_copy_template?: string
   hide_ccs_import_button?: boolean
   table_default_page_size?: number
