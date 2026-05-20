@@ -28,34 +28,37 @@ var heroSmsRetryBackoffs = []time.Duration{
 }
 
 type heroSmsClient struct {
-	httpClient *http.Client
-	baseURL    string
-	apiKey     string
-	service    string
-	country    string
+	httpClient  *http.Client
+	baseURL     string
+	apiKey      string
+	service     string
+	country     string
+	settingsSvc *service.SettingService
 }
 
-func NewHeroSmsClient(cfg *config.Config) service.HeroSmsClient {
+func NewHeroSmsClient(cfg *config.Config, settingsSvc *service.SettingService) service.HeroSmsClient {
 	return &heroSmsClient{
-		httpClient: &http.Client{Timeout: 15 * time.Second},
-		baseURL:    cfg.HeroSms.BaseURL,
-		apiKey:     cfg.HeroSms.APIKey,
-		service:    cfg.HeroSms.Service,
-		country:    cfg.HeroSms.Country,
+		httpClient:  &http.Client{Timeout: 15 * time.Second},
+		baseURL:     cfg.HeroSms.BaseURL,
+		apiKey:      cfg.HeroSms.APIKey,
+		service:     cfg.HeroSms.Service,
+		country:     cfg.HeroSms.Country,
+		settingsSvc: settingsSvc,
 	}
 }
 
-func (c *heroSmsClient) resolveParams(serviceType string) (svc, country, maxPrice string) {
+func (c *heroSmsClient) resolveParams(serviceType string) (svc, country string) {
 	switch serviceType {
 	case "openai":
-		return "dr", "76", "0.2"
+		return "dr", "76"
 	default:
-		return c.service, c.country, "0.063"
+		return c.service, c.country
 	}
 }
 
 func (c *heroSmsClient) GetNumber(ctx context.Context, serviceType string) (*service.HeroSmsNumber, error) {
-	svc, country, maxPrice := c.resolveParams(serviceType)
+	svc, country := c.resolveParams(serviceType)
+	maxPrice := c.settingsSvc.GetSmsMaxPrice(ctx, serviceType)
 	params := url.Values{}
 	params.Set("action", "getNumber")
 	params.Set("service", svc)

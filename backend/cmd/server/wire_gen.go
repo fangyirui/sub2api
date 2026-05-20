@@ -223,7 +223,7 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 	channelHandler := admin.NewChannelHandler(channelService, billingService)
 	adminPaymentHandler := admin.NewPaymentHandler(paymentService, paymentConfigService)
 	smsOrderRepository := repository.NewSmsOrderRepository(client)
-	heroSmsClient := repository.NewHeroSmsClient(configConfig)
+	heroSmsClient := repository.NewHeroSmsClient(configConfig, settingService)
 	smsOrderService := service.ProvideSmsOrderService(smsOrderRepository, heroSmsClient, configConfig)
 	adminSmsOrderHandler := admin.NewAdminSmsOrderHandler(smsOrderService)
 	adminHandlers := handler.ProvideAdminHandlers(dashboardHandler, adminUserHandler, groupHandler, accountHandler, adminAnnouncementHandler, dataManagementHandler, backupHandler, oAuthHandler, openAIOAuthHandler, geminiOAuthHandler, antigravityOAuthHandler, proxyHandler, adminRedeemHandler, promoHandler, settingHandler, opsHandler, systemHandler, adminSubscriptionHandler, adminUsageHandler, userAttributeHandler, errorPassthroughHandler, tlsFingerprintProfileHandler, adminAPIKeyHandler, scheduledTestHandler, channelHandler, adminPaymentHandler, adminSmsOrderHandler)
