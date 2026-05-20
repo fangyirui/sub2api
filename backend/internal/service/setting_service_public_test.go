@@ -41,7 +41,11 @@ func (s *settingPublicRepoStub) SetMultiple(ctx context.Context, settings map[st
 }
 
 func (s *settingPublicRepoStub) GetAll(ctx context.Context) (map[string]string, error) {
-	panic("unexpected GetAll call")
+	out := make(map[string]string, len(s.values))
+	for k, v := range s.values {
+		out[k] = v
+	}
+	return out, nil
 }
 
 func (s *settingPublicRepoStub) Delete(ctx context.Context, key string) error {
@@ -101,4 +105,29 @@ func TestSettingService_GetPublicSettings_SmsServiceTypeRespectsFalse(t *testing
 	require.NoError(t, err)
 	require.True(t, settings.SmsServiceTypeClaudeEnabled)
 	require.False(t, settings.SmsServiceTypeOpenaiEnabled)
+}
+
+func TestSettingService_GetSmsMaxPrice_DefaultsWhenUnset(t *testing.T) {
+	repo := &settingPublicRepoStub{values: map[string]string{}}
+	svc := NewSettingService(repo, &config.Config{})
+
+	all, err := svc.GetAllSettings(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, "0.07", all.SmsServiceTypeClaudeMaxPrice, "claude default should be 0.07")
+	require.Equal(t, "0.35", all.SmsServiceTypeOpenaiMaxPrice, "openai default should be 0.35")
+}
+
+func TestSettingService_GetSmsMaxPrice_RespectsOverrides(t *testing.T) {
+	repo := &settingPublicRepoStub{
+		values: map[string]string{
+			SettingKeySmsServiceTypeClaudeMaxPrice: "0.12",
+			SettingKeySmsServiceTypeOpenaiMaxPrice: "0.50",
+		},
+	}
+	svc := NewSettingService(repo, &config.Config{})
+
+	all, err := svc.GetAllSettings(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, "0.12", all.SmsServiceTypeClaudeMaxPrice)
+	require.Equal(t, "0.50", all.SmsServiceTypeOpenaiMaxPrice)
 }

@@ -143,7 +143,9 @@ const (
 	SettingKeySmsQueryNotice              = "sms_query_notice"               // SMS 查询页面公告文本
 	SettingKeySmsOrderCopyTemplate       = "sms_order_copy_template"        // SMS 订单复制模板
 	SettingKeySmsServiceTypeClaudeEnabled = "sms_service_type_claude_enabled" // SMS 激活页是否允许用户选择 Claude
-	SettingKeySmsServiceTypeOpenaiEnabled = "sms_service_type_openai_enabled" // SMS 激活页是否允许用户选择 OpenAI
+	SettingKeySmsServiceTypeOpenaiEnabled  = "sms_service_type_openai_enabled"   // SMS 激活页是否允许用户选择 OpenAI
+	SettingKeySmsServiceTypeClaudeMaxPrice = "sms_service_type_claude_max_price" // SMS Hero 取号 Claude 最大单价
+	SettingKeySmsServiceTypeOpenaiMaxPrice = "sms_service_type_openai_max_price" // SMS Hero 取号 OpenAI 最大单价
 	SettingKeyHideCcsImportButton         = "hide_ccs_import_button"        // 是否隐藏 API Keys 页面的导入 CCS 按钮
 	SettingKeyPurchaseSubscriptionEnabled = "purchase_subscription_enabled" // 是否展示"购买订阅"页面入口
 	SettingKeyPurchaseSubscriptionURL     = "purchase_subscription_url"     // "购买订阅"页面 URL（作为 iframe src）

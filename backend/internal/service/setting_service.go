@@ -988,6 +988,8 @@ func (s *SettingService) parseSettings(settings map[string]string) *SystemSettin
 		SmsOrderCopyTemplate:             settings[SettingKeySmsOrderCopyTemplate],
 		SmsServiceTypeClaudeEnabled:      settings[SettingKeySmsServiceTypeClaudeEnabled] != "false", // 默认启用
 		SmsServiceTypeOpenaiEnabled:      settings[SettingKeySmsServiceTypeOpenaiEnabled] != "false", // 默认启用
+		SmsServiceTypeClaudeMaxPrice:     s.getStringOrDefault(settings, SettingKeySmsServiceTypeClaudeMaxPrice, "0.07"),
+		SmsServiceTypeOpenaiMaxPrice:     s.getStringOrDefault(settings, SettingKeySmsServiceTypeOpenaiMaxPrice, "0.35"),
 		HideCcsImportButton:              settings[SettingKeyHideCcsImportButton] == "true",
 		PurchaseSubscriptionEnabled:      settings[SettingKeyPurchaseSubscriptionEnabled] == "true",
 		PurchaseSubscriptionURL:          strings.TrimSpace(settings[SettingKeyPurchaseSubscriptionURL]),

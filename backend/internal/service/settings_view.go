@@ -66,8 +66,10 @@ type SystemSettings struct {
 	SmsQueryNotice              string
 	SmsOrderCopyTemplate        string
 	SmsServiceTypeClaudeEnabled bool
-	SmsServiceTypeOpenaiEnabled bool
-	HideCcsImportButton         bool
+	SmsServiceTypeOpenaiEnabled  bool
+	SmsServiceTypeClaudeMaxPrice string
+	SmsServiceTypeOpenaiMaxPrice string
+	HideCcsImportButton          bool
 	PurchaseSubscriptionEnabled bool
 	PurchaseSubscriptionURL     string
 	TableDefaultPageSize        int
