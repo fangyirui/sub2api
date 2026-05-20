@@ -21160,22 +21160,24 @@ func (m *SettingMutation) ResetEdge(name string) error {
 // SmsOrderMutation represents an operation that mutates the SmsOrder nodes in the graph.
 type SmsOrderMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	created_at    *time.Time
-	updated_at    *time.Time
-	order_no      *string
-	service_type  *string
-	phone_number  *string
-	hero_sms_id   *string
-	sms_content   *string
-	status        *string
-	pending_at    *time.Time
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*SmsOrder, error)
-	predicates    []predicate.SmsOrder
+	op             Op
+	typ            string
+	id             *int64
+	created_at     *time.Time
+	updated_at     *time.Time
+	order_no       *string
+	service_type   *string
+	phone_number   *string
+	hero_sms_id    *string
+	sms_content    *string
+	status         *string
+	pending_at     *time.Time
+	retry_count    *int
+	addretry_count *int
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*SmsOrder, error)
+	predicates     []predicate.SmsOrder
 }
 
 var _ ent.Mutation = (*SmsOrderMutation)(nil)
@@ -21652,6 +21654,62 @@ func (m *SmsOrderMutation) ResetPendingAt() {
 	delete(m.clearedFields, smsorder.FieldPendingAt)
 }
 
+// SetRetryCount sets the "retry_count" field.
+func (m *SmsOrderMutation) SetRetryCount(i int) {
+	m.retry_count = &i
+	m.addretry_count = nil
+}
+
+// RetryCount returns the value of the "retry_count" field in the mutation.
+func (m *SmsOrderMutation) RetryCount() (r int, exists bool) {
+	v := m.retry_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRetryCount returns the old "retry_count" field's value of the SmsOrder entity.
+// If the SmsOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SmsOrderMutation) OldRetryCount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRetryCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRetryCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRetryCount: %w", err)
+	}
+	return oldValue.RetryCount, nil
+}
+
+// AddRetryCount adds i to the "retry_count" field.
+func (m *SmsOrderMutation) AddRetryCount(i int) {
+	if m.addretry_count != nil {
+		*m.addretry_count += i
+	} else {
+		m.addretry_count = &i
+	}
+}
+
+// AddedRetryCount returns the value that was added to the "retry_count" field in this mutation.
+func (m *SmsOrderMutation) AddedRetryCount() (r int, exists bool) {
+	v := m.addretry_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRetryCount resets all changes to the "retry_count" field.
+func (m *SmsOrderMutation) ResetRetryCount() {
+	m.retry_count = nil
+	m.addretry_count = nil
+}
+
 // Where appends a list predicates to the SmsOrderMutation builder.
 func (m *SmsOrderMutation) Where(ps ...predicate.SmsOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -21686,7 +21744,7 @@ func (m *SmsOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SmsOrderMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, smsorder.FieldCreatedAt)
 	}
@@ -21714,6 +21772,9 @@ func (m *SmsOrderMutation) Fields() []string {
 	if m.pending_at != nil {
 		fields = append(fields, smsorder.FieldPendingAt)
 	}
+	if m.retry_count != nil {
+		fields = append(fields, smsorder.FieldRetryCount)
+	}
 	return fields
 }
 
@@ -21740,6 +21801,8 @@ func (m *SmsOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case smsorder.FieldPendingAt:
 		return m.PendingAt()
+	case smsorder.FieldRetryCount:
+		return m.RetryCount()
 	}
 	return nil, false
 }
@@ -21767,6 +21830,8 @@ func (m *SmsOrderMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldStatus(ctx)
 	case smsorder.FieldPendingAt:
 		return m.OldPendingAt(ctx)
+	case smsorder.FieldRetryCount:
+		return m.OldRetryCount(ctx)
 	}
 	return nil, fmt.Errorf("unknown SmsOrder field %s", name)
 }
@@ -21839,6 +21904,13 @@ func (m *SmsOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPendingAt(v)
 		return nil
+	case smsorder.FieldRetryCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRetryCount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SmsOrder field %s", name)
 }
@@ -21846,13 +21918,21 @@ func (m *SmsOrderMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *SmsOrderMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addretry_count != nil {
+		fields = append(fields, smsorder.FieldRetryCount)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *SmsOrderMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case smsorder.FieldRetryCount:
+		return m.AddedRetryCount()
+	}
 	return nil, false
 }
 
@@ -21861,6 +21941,13 @@ func (m *SmsOrderMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SmsOrderMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case smsorder.FieldRetryCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRetryCount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SmsOrder numeric field %s", name)
 }
@@ -21941,6 +22028,9 @@ func (m *SmsOrderMutation) ResetField(name string) error {
 		return nil
 	case smsorder.FieldPendingAt:
 		m.ResetPendingAt()
+		return nil
+	case smsorder.FieldRetryCount:
+		m.ResetRetryCount()
 		return nil
 	}
 	return fmt.Errorf("unknown SmsOrder field %s", name)

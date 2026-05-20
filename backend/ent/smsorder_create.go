@@ -140,6 +140,20 @@ func (_c *SmsOrderCreate) SetNillablePendingAt(v *time.Time) *SmsOrderCreate {
 	return _c
 }
 
+// SetRetryCount sets the "retry_count" field.
+func (_c *SmsOrderCreate) SetRetryCount(v int) *SmsOrderCreate {
+	_c.mutation.SetRetryCount(v)
+	return _c
+}
+
+// SetNillableRetryCount sets the "retry_count" field if the given value is not nil.
+func (_c *SmsOrderCreate) SetNillableRetryCount(v *int) *SmsOrderCreate {
+	if v != nil {
+		_c.SetRetryCount(*v)
+	}
+	return _c
+}
+
 // Mutation returns the SmsOrderMutation object of the builder.
 func (_c *SmsOrderCreate) Mutation() *SmsOrderMutation {
 	return _c.mutation
@@ -203,6 +217,10 @@ func (_c *SmsOrderCreate) defaults() {
 		v := smsorder.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	if _, ok := _c.mutation.RetryCount(); !ok {
+		v := smsorder.DefaultRetryCount
+		_c.mutation.SetRetryCount(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -246,6 +264,9 @@ func (_c *SmsOrderCreate) check() error {
 		if err := smsorder.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SmsOrder.status": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.RetryCount(); !ok {
+		return &ValidationError{Name: "retry_count", err: errors.New(`ent: missing required field "SmsOrder.retry_count"`)}
 	}
 	return nil
 }
@@ -309,6 +330,10 @@ func (_c *SmsOrderCreate) createSpec() (*SmsOrder, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.PendingAt(); ok {
 		_spec.SetField(smsorder.FieldPendingAt, field.TypeTime, value)
 		_node.PendingAt = &value
+	}
+	if value, ok := _c.mutation.RetryCount(); ok {
+		_spec.SetField(smsorder.FieldRetryCount, field.TypeInt, value)
+		_node.RetryCount = value
 	}
 	return _node, _spec
 }
@@ -479,6 +504,24 @@ func (u *SmsOrderUpsert) UpdatePendingAt() *SmsOrderUpsert {
 // ClearPendingAt clears the value of the "pending_at" field.
 func (u *SmsOrderUpsert) ClearPendingAt() *SmsOrderUpsert {
 	u.SetNull(smsorder.FieldPendingAt)
+	return u
+}
+
+// SetRetryCount sets the "retry_count" field.
+func (u *SmsOrderUpsert) SetRetryCount(v int) *SmsOrderUpsert {
+	u.Set(smsorder.FieldRetryCount, v)
+	return u
+}
+
+// UpdateRetryCount sets the "retry_count" field to the value that was provided on create.
+func (u *SmsOrderUpsert) UpdateRetryCount() *SmsOrderUpsert {
+	u.SetExcluded(smsorder.FieldRetryCount)
+	return u
+}
+
+// AddRetryCount adds v to the "retry_count" field.
+func (u *SmsOrderUpsert) AddRetryCount(v int) *SmsOrderUpsert {
+	u.Add(smsorder.FieldRetryCount, v)
 	return u
 }
 
@@ -664,6 +707,27 @@ func (u *SmsOrderUpsertOne) UpdatePendingAt() *SmsOrderUpsertOne {
 func (u *SmsOrderUpsertOne) ClearPendingAt() *SmsOrderUpsertOne {
 	return u.Update(func(s *SmsOrderUpsert) {
 		s.ClearPendingAt()
+	})
+}
+
+// SetRetryCount sets the "retry_count" field.
+func (u *SmsOrderUpsertOne) SetRetryCount(v int) *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetRetryCount(v)
+	})
+}
+
+// AddRetryCount adds v to the "retry_count" field.
+func (u *SmsOrderUpsertOne) AddRetryCount(v int) *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.AddRetryCount(v)
+	})
+}
+
+// UpdateRetryCount sets the "retry_count" field to the value that was provided on create.
+func (u *SmsOrderUpsertOne) UpdateRetryCount() *SmsOrderUpsertOne {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdateRetryCount()
 	})
 }
 
@@ -1015,6 +1079,27 @@ func (u *SmsOrderUpsertBulk) UpdatePendingAt() *SmsOrderUpsertBulk {
 func (u *SmsOrderUpsertBulk) ClearPendingAt() *SmsOrderUpsertBulk {
 	return u.Update(func(s *SmsOrderUpsert) {
 		s.ClearPendingAt()
+	})
+}
+
+// SetRetryCount sets the "retry_count" field.
+func (u *SmsOrderUpsertBulk) SetRetryCount(v int) *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.SetRetryCount(v)
+	})
+}
+
+// AddRetryCount adds v to the "retry_count" field.
+func (u *SmsOrderUpsertBulk) AddRetryCount(v int) *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.AddRetryCount(v)
+	})
+}
+
+// UpdateRetryCount sets the "retry_count" field to the value that was provided on create.
+func (u *SmsOrderUpsertBulk) UpdateRetryCount() *SmsOrderUpsertBulk {
+	return u.Update(func(s *SmsOrderUpsert) {
+		s.UpdateRetryCount()
 	})
 }
 

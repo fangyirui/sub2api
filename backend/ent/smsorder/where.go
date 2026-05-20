@@ -99,6 +99,11 @@ func PendingAt(v time.Time) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldPendingAt, v))
 }
 
+// RetryCount applies equality check predicate on the "retry_count" field. It's identical to RetryCountEQ.
+func RetryCount(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldRetryCount, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldEQ(FieldCreatedAt, v))
@@ -647,6 +652,46 @@ func PendingAtIsNil() predicate.SmsOrder {
 // PendingAtNotNil applies the NotNil predicate on the "pending_at" field.
 func PendingAtNotNil() predicate.SmsOrder {
 	return predicate.SmsOrder(sql.FieldNotNull(FieldPendingAt))
+}
+
+// RetryCountEQ applies the EQ predicate on the "retry_count" field.
+func RetryCountEQ(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldEQ(FieldRetryCount, v))
+}
+
+// RetryCountNEQ applies the NEQ predicate on the "retry_count" field.
+func RetryCountNEQ(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNEQ(FieldRetryCount, v))
+}
+
+// RetryCountIn applies the In predicate on the "retry_count" field.
+func RetryCountIn(vs ...int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldIn(FieldRetryCount, vs...))
+}
+
+// RetryCountNotIn applies the NotIn predicate on the "retry_count" field.
+func RetryCountNotIn(vs ...int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldNotIn(FieldRetryCount, vs...))
+}
+
+// RetryCountGT applies the GT predicate on the "retry_count" field.
+func RetryCountGT(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGT(FieldRetryCount, v))
+}
+
+// RetryCountGTE applies the GTE predicate on the "retry_count" field.
+func RetryCountGTE(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldGTE(FieldRetryCount, v))
+}
+
+// RetryCountLT applies the LT predicate on the "retry_count" field.
+func RetryCountLT(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLT(FieldRetryCount, v))
+}
+
+// RetryCountLTE applies the LTE predicate on the "retry_count" field.
+func RetryCountLTE(v int) predicate.SmsOrder {
+	return predicate.SmsOrder(sql.FieldLTE(FieldRetryCount, v))
 }
 
 // And groups predicates with the AND operator between them.

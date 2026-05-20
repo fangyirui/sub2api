@@ -34,7 +34,9 @@ type SmsOrder struct {
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
 	// PendingAt holds the value of the "pending_at" field.
-	PendingAt    *time.Time `json:"pending_at,omitempty"`
+	PendingAt *time.Time `json:"pending_at,omitempty"`
+	// RetryCount holds the value of the "retry_count" field.
+	RetryCount   int `json:"retry_count,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -43,7 +45,7 @@ func (*SmsOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case smsorder.FieldID:
+		case smsorder.FieldID, smsorder.FieldRetryCount:
 			values[i] = new(sql.NullInt64)
 		case smsorder.FieldOrderNo, smsorder.FieldServiceType, smsorder.FieldPhoneNumber, smsorder.FieldHeroSmsID, smsorder.FieldSmsContent, smsorder.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -125,6 +127,12 @@ func (_m *SmsOrder) assignValues(columns []string, values []any) error {
 				_m.PendingAt = new(time.Time)
 				*_m.PendingAt = value.Time
 			}
+		case smsorder.FieldRetryCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field retry_count", values[i])
+			} else if value.Valid {
+				_m.RetryCount = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -189,6 +197,9 @@ func (_m *SmsOrder) String() string {
 		builder.WriteString("pending_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("retry_count=")
+	builder.WriteString(fmt.Sprintf("%v", _m.RetryCount))
 	builder.WriteByte(')')
 	return builder.String()
 }

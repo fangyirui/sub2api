@@ -12,9 +12,13 @@ import (
 )
 
 var (
-	ErrSmsOrderNotFound   = infraerrors.NotFound("SMS_ORDER_NOT_FOUND", "SMS order not found")
-	ErrSmsOrderFetchFailed = infraerrors.ServiceUnavailable("SMS_ORDER_FETCH_FAILED", "Failed to fetch phone number, please contact support")
-	ErrSmsOrderExpired    = infraerrors.ServiceUnavailable("SMS_ORDER_EXPIRED", "SMS order has expired")
+	ErrSmsOrderNotFound            = infraerrors.NotFound("SMS_ORDER_NOT_FOUND", "SMS order not found")
+	ErrSmsOrderFetchFailed         = infraerrors.ServiceUnavailable("SMS_ORDER_FETCH_FAILED", "Failed to fetch phone number, please contact support")
+	ErrSmsOrderExpired             = infraerrors.ServiceUnavailable("SMS_ORDER_EXPIRED", "SMS order has expired")
+	ErrSmsOrderNotPending          = infraerrors.Conflict("SMS_ORDER_NOT_PENDING", "SMS order is not in pending state")
+	ErrSmsOrderReassignTooSoon     = infraerrors.Conflict("SMS_ORDER_REASSIGN_TOO_SOON", "Must wait before requesting a new number")
+	ErrSmsOrderMaxRetries          = infraerrors.Conflict("SMS_ORDER_MAX_RETRIES", "Maximum number of retries reached")
+	ErrSmsOrderCodeAlreadyReceived = infraerrors.Conflict("SMS_ORDER_CODE_ALREADY_RECEIVED", "The current number has already received a verification code")
 )
 
 const (
@@ -23,6 +27,13 @@ const (
 	SmsOrderStatusReceived = "received"
 	SmsOrderStatusExpired  = "expired"
 	SmsOrderStatusFailed   = "failed"
+
+	// SmsOrderReassignMinWaitMinutes is how long the user must wait after a phone
+	// number was assigned before they can request a new one for the same order.
+	SmsOrderReassignMinWaitMinutes = 5
+	// SmsOrderMaxRetries caps reassignments per order (so an order can hold at
+	// most 1 + SmsOrderMaxRetries phone numbers in total).
+	SmsOrderMaxRetries = 2
 )
 
 type SmsOrder struct {
@@ -34,6 +45,7 @@ type SmsOrder struct {
 	SmsContent  string
 	Status      string
 	PendingAt   *time.Time
+	RetryCount  int
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -76,6 +88,7 @@ type SmsOrderRepository interface {
 	List(ctx context.Context, filter SmsOrderListFilter) (*SmsOrderListResult, error)
 	ListPending(ctx context.Context) ([]*SmsOrder, error)
 	AssignNumber(ctx context.Context, id int64, phone, heroSmsID, serviceType string, pendingAt time.Time) error
+	ReassignNumber(ctx context.Context, id int64, phone, heroSmsID string, pendingAt time.Time, retryCount int) error
 	UpdateStatus(ctx context.Context, id int64, status string) error
 	UpdateSmsContent(ctx context.Context, id int64, content string, status string) error
 }
@@ -170,6 +183,74 @@ func (s *SmsOrderService) RefreshSmsContent(ctx context.Context, orderNo, servic
 	default:
 		return order, nil
 	}
+}
+
+// ReassignNumber drops the current phone number on a pending order and fetches
+// a new one. Called from the public reassign endpoint when the user wants to
+// retry with a different number (e.g. the supplier silently consumed the SMS).
+//
+// Guard rails:
+//   - Order must be in `pending` state.
+//   - retry_count must be < SmsOrderMaxRetries.
+//   - At least SmsOrderReassignMinWaitMinutes must have elapsed since the
+//     current pending_at, so users don't burn the budget instantly.
+//   - The supplier is queried first; if the current number has already received
+//     a code, we persist it (status -> received) and refuse the reassign.
+//
+// On success: phone_number / hero_sms_id / sms_content are overwritten,
+// pending_at is reset to now (which also restarts the 20-minute expiry clock),
+// retry_count is incremented, and status remains `pending`. The service type is
+// locked to the order's original value.
+func (s *SmsOrderService) ReassignNumber(ctx context.Context, orderNo string) (*SmsOrder, error) {
+	order, err := s.repo.GetByOrderNo(ctx, orderNo)
+	if err != nil {
+		return nil, err
+	}
+
+	if order.Status != SmsOrderStatusPending {
+		return nil, ErrSmsOrderNotPending
+	}
+	if order.RetryCount >= SmsOrderMaxRetries {
+		return nil, ErrSmsOrderMaxRetries
+	}
+	if order.PendingAt == nil {
+		return nil, ErrSmsOrderNotPending
+	}
+	if time.Since(*order.PendingAt) < time.Duration(SmsOrderReassignMinWaitMinutes)*time.Minute {
+		return nil, ErrSmsOrderReassignTooSoon
+	}
+
+	if order.HeroSmsID != "" {
+		status, err := s.heroClient.GetStatus(ctx, order.HeroSmsID)
+		if err == nil && status.Received {
+			if updErr := s.repo.UpdateSmsContent(ctx, order.ID, status.Text, SmsOrderStatusReceived); updErr != nil {
+				slog.Error("persist received sms before reassign", "order_no", order.OrderNo, "error", updErr)
+			}
+			return nil, ErrSmsOrderCodeAlreadyReceived
+		}
+		if err != nil {
+			slog.Warn("hero-sms getStatus before reassign failed; proceeding", "order_no", order.OrderNo, "error", err)
+		}
+	}
+
+	num, err := s.heroClient.GetNumberWithRetry(ctx, order.ServiceType)
+	if err != nil {
+		return nil, ErrSmsOrderFetchFailed
+	}
+
+	now := time.Now()
+	newRetryCount := order.RetryCount + 1
+	if err := s.repo.ReassignNumber(ctx, order.ID, num.Phone, num.ID, now, newRetryCount); err != nil {
+		return nil, err
+	}
+
+	order.PhoneNumber = num.Phone
+	order.HeroSmsID = num.ID
+	order.SmsContent = ""
+	order.PendingAt = &now
+	order.RetryCount = newRetryCount
+	order.Status = SmsOrderStatusPending
+	return order, nil
 }
 
 func (s *SmsOrderService) assignNumber(ctx context.Context, order *SmsOrder, serviceTypeOverride string) (*SmsOrder, error) {

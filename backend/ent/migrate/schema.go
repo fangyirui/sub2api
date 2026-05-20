@@ -835,6 +835,7 @@ var (
 		{Name: "sms_content", Type: field.TypeString, Nullable: true, Default: "", SchemaType: map[string]string{"postgres": "text"}},
 		{Name: "status", Type: field.TypeString, Size: 20, Default: "created"},
 		{Name: "pending_at", Type: field.TypeTime, Nullable: true},
+		{Name: "retry_count", Type: field.TypeInt, Default: 0},
 	}
 	// SmsOrdersTable holds the schema information for the "sms_orders" table.
 	SmsOrdersTable = &schema.Table{

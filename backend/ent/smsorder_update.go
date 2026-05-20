@@ -156,6 +156,27 @@ func (_u *SmsOrderUpdate) ClearPendingAt() *SmsOrderUpdate {
 	return _u
 }
 
+// SetRetryCount sets the "retry_count" field.
+func (_u *SmsOrderUpdate) SetRetryCount(v int) *SmsOrderUpdate {
+	_u.mutation.ResetRetryCount()
+	_u.mutation.SetRetryCount(v)
+	return _u
+}
+
+// SetNillableRetryCount sets the "retry_count" field if the given value is not nil.
+func (_u *SmsOrderUpdate) SetNillableRetryCount(v *int) *SmsOrderUpdate {
+	if v != nil {
+		_u.SetRetryCount(*v)
+	}
+	return _u
+}
+
+// AddRetryCount adds value to the "retry_count" field.
+func (_u *SmsOrderUpdate) AddRetryCount(v int) *SmsOrderUpdate {
+	_u.mutation.AddRetryCount(v)
+	return _u
+}
+
 // Mutation returns the SmsOrderMutation object of the builder.
 func (_u *SmsOrderUpdate) Mutation() *SmsOrderMutation {
 	return _u.mutation
@@ -274,6 +295,12 @@ func (_u *SmsOrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.PendingAtCleared() {
 		_spec.ClearField(smsorder.FieldPendingAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.RetryCount(); ok {
+		_spec.SetField(smsorder.FieldRetryCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedRetryCount(); ok {
+		_spec.AddField(smsorder.FieldRetryCount, field.TypeInt, value)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -420,6 +447,27 @@ func (_u *SmsOrderUpdateOne) SetNillablePendingAt(v *time.Time) *SmsOrderUpdateO
 // ClearPendingAt clears the value of the "pending_at" field.
 func (_u *SmsOrderUpdateOne) ClearPendingAt() *SmsOrderUpdateOne {
 	_u.mutation.ClearPendingAt()
+	return _u
+}
+
+// SetRetryCount sets the "retry_count" field.
+func (_u *SmsOrderUpdateOne) SetRetryCount(v int) *SmsOrderUpdateOne {
+	_u.mutation.ResetRetryCount()
+	_u.mutation.SetRetryCount(v)
+	return _u
+}
+
+// SetNillableRetryCount sets the "retry_count" field if the given value is not nil.
+func (_u *SmsOrderUpdateOne) SetNillableRetryCount(v *int) *SmsOrderUpdateOne {
+	if v != nil {
+		_u.SetRetryCount(*v)
+	}
+	return _u
+}
+
+// AddRetryCount adds value to the "retry_count" field.
+func (_u *SmsOrderUpdateOne) AddRetryCount(v int) *SmsOrderUpdateOne {
+	_u.mutation.AddRetryCount(v)
 	return _u
 }
 
@@ -571,6 +619,12 @@ func (_u *SmsOrderUpdateOne) sqlSave(ctx context.Context) (_node *SmsOrder, err 
 	}
 	if _u.mutation.PendingAtCleared() {
 		_spec.ClearField(smsorder.FieldPendingAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.RetryCount(); ok {
+		_spec.SetField(smsorder.FieldRetryCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedRetryCount(); ok {
+		_spec.AddField(smsorder.FieldRetryCount, field.TypeInt, value)
 	}
 	_node = &SmsOrder{config: _u.config}
 	_spec.Assign = _node.assignValues

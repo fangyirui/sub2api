@@ -5580,6 +5580,13 @@ export default {
     queryError: 'Query failed, please try again later',
     fetchFailed: 'Failed to fetch phone number, please contact support',
     footer: 'Enter a valid order number to query',
+    reassignBtn: 'Get New Number',
+    reassignCountdown: 'Available in {time}',
+    reassignMaxed: 'Max retries reached',
+    retryCount: 'Retries: {used}/{max}',
+    codeAlreadyReceived: 'The current number already received a code; no need to retry',
+    reassignTooSoon: 'Please wait 5 minutes before requesting a new number',
+    reassignError: 'Failed to get a new number, please try again later',
     status: {
       created: 'Awaiting Number',
       pending: 'Awaiting SMS',

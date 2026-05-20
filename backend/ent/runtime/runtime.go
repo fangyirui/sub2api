@@ -988,6 +988,10 @@ func init() {
 	smsorder.DefaultStatus = smsorderDescStatus.Default.(string)
 	// smsorder.StatusValidator is a validator for the "status" field. It is called by the builders before save.
 	smsorder.StatusValidator = smsorderDescStatus.Validators[0].(func(string) error)
+	// smsorderDescRetryCount is the schema descriptor for retry_count field.
+	smsorderDescRetryCount := smsorderFields[7].Descriptor()
+	// smsorder.DefaultRetryCount holds the default value on creation for the retry_count field.
+	smsorder.DefaultRetryCount = smsorderDescRetryCount.Default.(int)
 	subscriptionplanFields := schema.SubscriptionPlan{}.Fields()
 	_ = subscriptionplanFields
 	// subscriptionplanDescName is the schema descriptor for name field.

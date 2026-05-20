@@ -31,6 +31,8 @@ const (
 	FieldStatus = "status"
 	// FieldPendingAt holds the string denoting the pending_at field in the database.
 	FieldPendingAt = "pending_at"
+	// FieldRetryCount holds the string denoting the retry_count field in the database.
+	FieldRetryCount = "retry_count"
 	// Table holds the table name of the smsorder in the database.
 	Table = "sms_orders"
 )
@@ -47,6 +49,7 @@ var Columns = []string{
 	FieldSmsContent,
 	FieldStatus,
 	FieldPendingAt,
+	FieldRetryCount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -86,6 +89,8 @@ var (
 	DefaultStatus string
 	// StatusValidator is a validator for the "status" field. It is called by the builders before save.
 	StatusValidator func(string) error
+	// DefaultRetryCount holds the default value on creation for the "retry_count" field.
+	DefaultRetryCount int
 )
 
 // OrderOption defines the ordering options for the SmsOrder queries.
@@ -139,4 +144,9 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByPendingAt orders the results by the pending_at field.
 func ByPendingAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPendingAt, opts...).ToFunc()
+}
+
+// ByRetryCount orders the results by the retry_count field.
+func ByRetryCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRetryCount, opts...).ToFunc()
 }

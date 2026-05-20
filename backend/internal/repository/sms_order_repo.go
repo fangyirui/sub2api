@@ -129,6 +129,17 @@ func (r *smsOrderRepository) AssignNumber(ctx context.Context, id int64, phone, 
 		Exec(ctx)
 }
 
+func (r *smsOrderRepository) ReassignNumber(ctx context.Context, id int64, phone, heroSmsID string, pendingAt time.Time, retryCount int) error {
+	return r.client.SmsOrder.UpdateOneID(id).
+		SetPhoneNumber(phone).
+		SetHeroSmsID(heroSmsID).
+		SetPendingAt(pendingAt).
+		SetRetryCount(retryCount).
+		SetSmsContent("").
+		SetStatus(service.SmsOrderStatusPending).
+		Exec(ctx)
+}
+
 func (r *smsOrderRepository) UpdateStatus(ctx context.Context, id int64, status string) error {
 	return r.client.SmsOrder.UpdateOneID(id).
 		SetStatus(status).
@@ -155,6 +166,7 @@ func smsOrderEntityToService(m *dbent.SmsOrder) *service.SmsOrder {
 		SmsContent:  m.SmsContent,
 		Status:      m.Status,
 		PendingAt:   m.PendingAt,
+		RetryCount:  m.RetryCount,
 		CreatedAt:   m.CreatedAt,
 		UpdatedAt:   m.UpdatedAt,
 	}

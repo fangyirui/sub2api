@@ -14,6 +14,7 @@ type SmsOrderResponse struct {
 	SmsContent  string     `json:"sms_content"`
 	Status      string     `json:"status"`
 	PendingAt   *time.Time `json:"pending_at,omitempty"`
+	RetryCount  int        `json:"retry_count"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
 }
@@ -30,6 +31,7 @@ func SmsOrderFromService(o *service.SmsOrder) *SmsOrderResponse {
 		SmsContent:  o.SmsContent,
 		Status:      o.Status,
 		PendingAt:   o.PendingAt,
+		RetryCount:  o.RetryCount,
 		CreatedAt:   o.CreatedAt,
 		UpdatedAt:   o.UpdatedAt,
 	}

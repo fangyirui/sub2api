@@ -56,6 +56,8 @@ func (SmsOrder) Fields() []ent.Field {
 		field.Time("pending_at").
 			Optional().
 			Nillable(),
+		field.Int("retry_count").
+			Default(0),
 	}
 }
 

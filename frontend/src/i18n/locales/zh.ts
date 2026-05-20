@@ -5766,6 +5766,13 @@ export default {
     queryError: '查询失败，请稍后重试',
     fetchFailed: '获取手机号失败，请联系客服',
     footer: '请输入正确的订单号进行查询',
+    reassignBtn: '重新获取号码',
+    reassignCountdown: '{time} 后可重新获取',
+    reassignMaxed: '已达最大重试次数',
+    retryCount: '重试: {used}/{max}',
+    codeAlreadyReceived: '当前号码已收到验证码，无需重新获取',
+    reassignTooSoon: '请等待 5 分钟后再重新获取',
+    reassignError: '重新获取失败，请稍后重试',
     status: {
       created: '待获取',
       pending: '等待短信',

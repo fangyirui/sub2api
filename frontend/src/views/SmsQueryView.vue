@@ -252,6 +252,34 @@
               <p v-else class="text-sm text-gray-500 dark:text-dark-400">{{ t('smsQuery.waitingPhone') }}</p>
             </div>
 
+            <!-- Reassign Panel (status=pending only) -->
+            <div
+              v-if="result.status === 'pending'"
+              class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/60 bg-amber-50/60 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-900/10"
+            >
+              <span class="text-xs font-medium text-amber-700 dark:text-amber-300">
+                {{ t('smsQuery.retryCount', { used: result.retry_count, max: MAX_RETRIES }) }}
+              </span>
+              <button
+                @click="doReassign"
+                :disabled="loading || !canReassignNow"
+                class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-colors hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-dark-700 dark:disabled:text-dark-500"
+              >
+                <svg
+                  v-if="loading"
+                  class="h-3.5 w-3.5 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                <span v-if="reassignMaxed">{{ t('smsQuery.reassignMaxed') }}</span>
+                <span v-else-if="!canReassignNow">{{ t('smsQuery.reassignCountdown', { time: reassignCountdownText }) }}</span>
+                <span v-else>{{ t('smsQuery.reassignBtn') }}</span>
+              </button>
+            </div>
+
             <!-- SMS Content (status=pending/received) -->
             <div v-if="result.status !== 'created'">
               <label class="mb-1 block text-xs font-medium text-gray-400 dark:text-dark-500">{{ t('smsQuery.smsContent') }}</label>
@@ -304,7 +332,10 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
-import { queryByOrderNo, refreshOrder, type SmsOrderResponse } from '@/api/smsQuery'
+import { queryByOrderNo, refreshOrder, reassignOrder, type SmsOrderResponse } from '@/api/smsQuery'
+
+const REASSIGN_MIN_WAIT_SECONDS = 5 * 60
+const MAX_RETRIES = 2
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -418,6 +449,39 @@ async function doRefreshCode() {
   }
 }
 
+async function doReassign() {
+  const no = orderNo.value.trim()
+  if (!no) return
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    result.value = await reassignOrder(no)
+  } catch (err: any) {
+    if (err?.code === 'SMS_ORDER_CODE_ALREADY_RECEIVED') {
+      // Server already persisted the received code; re-query so the view
+      // updates to status=received with the verification code visible.
+      try {
+        result.value = await queryByOrderNo(no)
+      } catch {
+        // ignore; we'll still surface the original error to the user
+      }
+      error.value = t('smsQuery.codeAlreadyReceived')
+    } else if (err?.code === 'SMS_ORDER_REASSIGN_TOO_SOON') {
+      error.value = t('smsQuery.reassignTooSoon')
+    } else if (err?.code === 'SMS_ORDER_MAX_RETRIES') {
+      error.value = t('smsQuery.reassignMaxed')
+    } else if (err?.code === 'SMS_ORDER_FETCH_FAILED') {
+      error.value = t('smsQuery.fetchFailed')
+    } else {
+      error.value = err?.message || t('smsQuery.reassignError')
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
 watch([claudeEnabled, openaiEnabled], ([c, o]) => {
   if (result.value?.status !== 'created') return
   if (selectedServiceType.value === 'claude' && !c && o) selectedServiceType.value = 'openai'
@@ -449,6 +513,7 @@ function formatTime(iso: string): string {
 // Countdown timer for pending status (20 min timeout)
 const PENDING_TIMEOUT_MS = 20 * 60 * 1000
 const remainingSeconds = ref(0)
+const elapsedSeconds = ref(0)
 let countdownTimer: ReturnType<typeof setInterval> | null = null
 
 function startCountdown() {
@@ -459,8 +524,10 @@ function startCountdown() {
   const expiresAt = pendingAt + PENDING_TIMEOUT_MS
 
   const update = () => {
-    const left = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
+    const now = Date.now()
+    const left = Math.max(0, Math.floor((expiresAt - now) / 1000))
     remainingSeconds.value = left
+    elapsedSeconds.value = Math.max(0, Math.floor((now - pendingAt) / 1000))
     if (left <= 0) stopCountdown()
   }
 
@@ -475,11 +542,31 @@ function stopCountdown() {
   }
 }
 
-const countdownText = computed(() => {
-  const m = Math.floor(remainingSeconds.value / 60)
-  const s = remainingSeconds.value % 60
+function formatMmSs(seconds: number): string {
+  const safe = Math.max(0, seconds)
+  const m = Math.floor(safe / 60)
+  const s = safe % 60
   return `${m}:${s.toString().padStart(2, '0')}`
-})
+}
+
+const countdownText = computed(() => formatMmSs(remainingSeconds.value))
+
+const reassignMaxed = computed(
+  () => (result.value?.retry_count ?? 0) >= MAX_RETRIES,
+)
+
+const reassignWaitSeconds = computed(() =>
+  Math.max(0, REASSIGN_MIN_WAIT_SECONDS - elapsedSeconds.value),
+)
+
+const canReassignNow = computed(
+  () =>
+    result.value?.status === 'pending' &&
+    !reassignMaxed.value &&
+    reassignWaitSeconds.value === 0,
+)
+
+const reassignCountdownText = computed(() => formatMmSs(reassignWaitSeconds.value))
 
 watch(result, () => {
   startCountdown()

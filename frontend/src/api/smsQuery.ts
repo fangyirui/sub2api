@@ -12,6 +12,7 @@ export interface SmsOrderResponse {
   sms_content: string
   status: string
   pending_at?: string
+  retry_count: number
   created_at: string
   updated_at: string
 }
@@ -47,6 +48,24 @@ export async function refreshOrder(
   const response = await apiClient.post<SmsOrderResponse>(
     `/sms-orders/${encodeURIComponent(orderNo)}/refresh`,
     body
+  )
+  return response.data
+}
+
+/**
+ * Drop the current phone number on a pending order and fetch a new one.
+ *
+ * Server enforces: order must be pending, retry_count < 2, and at least 5
+ * minutes must have elapsed since `pending_at`. If the current number has
+ * already received a verification code, the server persists it and rejects
+ * the reassign with code `SMS_ORDER_CODE_ALREADY_RECEIVED`.
+ *
+ * Long-running: like `refreshOrder`, the server may retry up to 6 times when
+ * fetching the new number, so the request can take up to ~30 seconds.
+ */
+export async function reassignOrder(orderNo: string): Promise<SmsOrderResponse> {
+  const response = await apiClient.post<SmsOrderResponse>(
+    `/sms-orders/${encodeURIComponent(orderNo)}/reassign`
   )
   return response.data
 }
