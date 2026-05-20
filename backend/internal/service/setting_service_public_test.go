@@ -107,6 +107,79 @@ func TestSettingService_GetPublicSettings_SmsServiceTypeRespectsFalse(t *testing
 	require.False(t, settings.SmsServiceTypeOpenaiEnabled)
 }
 
+type settingMaxPriceRepoStub struct {
+	values map[string]string
+}
+
+func (s *settingMaxPriceRepoStub) Get(ctx context.Context, key string) (*Setting, error) {
+	panic("unexpected Get call")
+}
+
+func (s *settingMaxPriceRepoStub) GetValue(ctx context.Context, key string) (string, error) {
+	if v, ok := s.values[key]; ok {
+		return v, nil
+	}
+	return "", nil
+}
+
+func (s *settingMaxPriceRepoStub) Set(ctx context.Context, key, value string) error {
+	panic("unexpected Set call")
+}
+
+func (s *settingMaxPriceRepoStub) GetMultiple(ctx context.Context, keys []string) (map[string]string, error) {
+	panic("unexpected GetMultiple call")
+}
+
+func (s *settingMaxPriceRepoStub) SetMultiple(ctx context.Context, settings map[string]string) error {
+	panic("unexpected SetMultiple call")
+}
+
+func (s *settingMaxPriceRepoStub) GetAll(ctx context.Context) (map[string]string, error) {
+	panic("unexpected GetAll call")
+}
+
+func (s *settingMaxPriceRepoStub) Delete(ctx context.Context, key string) error {
+	panic("unexpected Delete call")
+}
+
+func TestSettingService_GetSmsMaxPrice_OpenaiRoute(t *testing.T) {
+	repo := &settingMaxPriceRepoStub{values: map[string]string{
+		SettingKeySmsServiceTypeOpenaiMaxPrice: "0.42",
+	}}
+	svc := NewSettingService(repo, &config.Config{})
+
+	got := svc.GetSmsMaxPrice(context.Background(), "openai")
+	require.Equal(t, "0.42", got)
+}
+
+func TestSettingService_GetSmsMaxPrice_ClaudeRoute(t *testing.T) {
+	repo := &settingMaxPriceRepoStub{values: map[string]string{
+		SettingKeySmsServiceTypeClaudeMaxPrice: "0.09",
+	}}
+	svc := NewSettingService(repo, &config.Config{})
+
+	got := svc.GetSmsMaxPrice(context.Background(), "claude")
+	require.Equal(t, "0.09", got)
+}
+
+func TestSettingService_GetSmsMaxPrice_UnknownTypeFallsBackToClaude(t *testing.T) {
+	repo := &settingMaxPriceRepoStub{values: map[string]string{
+		SettingKeySmsServiceTypeClaudeMaxPrice: "0.09",
+	}}
+	svc := NewSettingService(repo, &config.Config{})
+
+	require.Equal(t, "0.09", svc.GetSmsMaxPrice(context.Background(), ""))
+	require.Equal(t, "0.09", svc.GetSmsMaxPrice(context.Background(), "weird"))
+}
+
+func TestSettingService_GetSmsMaxPrice_EmptyOrErrorFallsBackToDefault(t *testing.T) {
+	repo := &settingMaxPriceRepoStub{values: map[string]string{}}
+	svc := NewSettingService(repo, &config.Config{})
+
+	require.Equal(t, "0.07", svc.GetSmsMaxPrice(context.Background(), "claude"))
+	require.Equal(t, "0.35", svc.GetSmsMaxPrice(context.Background(), "openai"))
+}
+
 func TestSettingService_GetSmsMaxPrice_DefaultsWhenUnset(t *testing.T) {
 	repo := &settingPublicRepoStub{values: map[string]string{}}
 	svc := NewSettingService(repo, &config.Config{})

@@ -140,6 +140,30 @@ func (s *SettingService) GetFrontendURL(ctx context.Context) string {
 	return s.cfg.Server.FrontendURL
 }
 
+// GetSmsMaxPrice 根据 serviceType 返回 Hero SMS 取号的 maxPrice 字符串。
+// openai → SettingKeySmsServiceTypeOpenaiMaxPrice（默认 "0.35"）
+// 其他（包括 claude / 空字符串 / 未知值）→ SettingKeySmsServiceTypeClaudeMaxPrice（默认 "0.07"）
+// 空值或读取错误时回落默认值。
+func (s *SettingService) GetSmsMaxPrice(ctx context.Context, serviceType string) string {
+	var key, fallback string
+	if serviceType == "openai" {
+		key = SettingKeySmsServiceTypeOpenaiMaxPrice
+		fallback = "0.35"
+	} else {
+		key = SettingKeySmsServiceTypeClaudeMaxPrice
+		fallback = "0.07"
+	}
+	val, err := s.settingRepo.GetValue(ctx, key)
+	if err != nil {
+		return fallback
+	}
+	val = strings.TrimSpace(val)
+	if val == "" {
+		return fallback
+	}
+	return val
+}
+
 // GetPublicSettings 获取公开设置（无需登录）
 func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings, error) {
 	keys := []string{
