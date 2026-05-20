@@ -224,6 +224,23 @@ func TestSettingService_UpdateSettings_TablePreferences(t *testing.T) {
 	require.Equal(t, "[20,100]", repo.updates[SettingKeyTablePageSizeOptions])
 }
 
+func TestSettingService_UpdateSettings_PersistsSmsMaxPrice(t *testing.T) {
+	repo := &settingUpdateRepoStub{}
+	svc := NewSettingService(repo, &config.Config{})
+
+	input := &SystemSettings{
+		SmsServiceTypeClaudeMaxPrice: "0.11",
+		SmsServiceTypeOpenaiMaxPrice: "0.55",
+		// Required scalars to avoid panics elsewhere in the path:
+		TableDefaultPageSize: 20,
+		TablePageSizeOptions: []int{10, 20, 50, 100},
+	}
+
+	require.NoError(t, svc.UpdateSettings(context.Background(), input))
+	require.Equal(t, "0.11", repo.updates[SettingKeySmsServiceTypeClaudeMaxPrice])
+	require.Equal(t, "0.55", repo.updates[SettingKeySmsServiceTypeOpenaiMaxPrice])
+}
+
 func TestSettingService_UpdateSettings_PersistsSmsServiceTypeFlags(t *testing.T) {
 	repo := &settingUpdateRepoStub{}
 	svc := NewSettingService(repo, &config.Config{})

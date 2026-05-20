@@ -575,6 +575,8 @@ func (s *SettingService) UpdateSettings(ctx context.Context, settings *SystemSet
 	updates[SettingKeySmsQueryNotice] = settings.SmsQueryNotice
 	updates[SettingKeySmsServiceTypeClaudeEnabled] = strconv.FormatBool(settings.SmsServiceTypeClaudeEnabled)
 	updates[SettingKeySmsServiceTypeOpenaiEnabled] = strconv.FormatBool(settings.SmsServiceTypeOpenaiEnabled)
+	updates[SettingKeySmsServiceTypeClaudeMaxPrice] = strings.TrimSpace(settings.SmsServiceTypeClaudeMaxPrice)
+	updates[SettingKeySmsServiceTypeOpenaiMaxPrice] = strings.TrimSpace(settings.SmsServiceTypeOpenaiMaxPrice)
 	updates[SettingKeySmsOrderCopyTemplate] = settings.SmsOrderCopyTemplate
 	updates[SettingKeyHideCcsImportButton] = strconv.FormatBool(settings.HideCcsImportButton)
 	updates[SettingKeyPurchaseSubscriptionEnabled] = strconv.FormatBool(settings.PurchaseSubscriptionEnabled)
